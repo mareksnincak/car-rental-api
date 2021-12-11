@@ -1,0 +1,27 @@
+services:
+  car-sharing-postgres:
+    image: postgres:14.1-alpine
+    ports:
+      - 127.0.0.1:5432:5432
+    env_file:
+      - ./env/postgres.env
+    volumes:
+      - pgdata-14:/var/lib/postgresql/data
+    restart: always
+
+  car-sharing-app:
+    build: .
+    ports:
+      - 127.0.0.1:3000:3000
+      - 127.0.0.1:9229:9229
+    env_file:
+      - ./env/app.env
+    volumes:
+      - ./src:/app/src
+    restart: always
+    depends_on:
+      - car-sharing-postgres
+
+volumes:
+  pgdata-14:
+  node-modules:
