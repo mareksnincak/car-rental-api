@@ -7,18 +7,20 @@ export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
   @Get('/')
-  search(@Query() queryParams: TPagination & { query: string }) {
-    const { page, pageSize } = queryParams;
+  async search(@Query() queryParams: TPagination & { query: string }) {
+    const { page, pageSize, sortBy, sortDirection, query } = queryParams;
 
-    const { vehicles, totalRecordCount } = this.vehicleService.search();
+    const { vehicles, pagination } = await this.vehicleService.search({
+      page,
+      pageSize,
+      sortBy,
+      sortDirection,
+      query,
+    });
 
     return {
       vehicles,
-      pagination: {
-        page,
-        pageSize,
-        totalRecordCount,
-      },
+      pagination,
     };
   }
 }

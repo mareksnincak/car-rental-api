@@ -19,6 +19,8 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
     "paths": {
+      "@entities/*": ["src/db/entities/*"],
+      "@repositories/*": ["src/db/repositories/*"],
       "@common/*": ["src/common/*"],
       "@vehicles/*": ["src/vehicles/*"],
       "@db/*": ["src/db/*"],

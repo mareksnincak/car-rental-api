@@ -8,4 +8,4 @@ COPY tsconfig.json tsconfig.build.json src ./
 
 USER node
 
-CMD ["yarn", "start:dev"]
+CMD ["yarn", "start:debug"]

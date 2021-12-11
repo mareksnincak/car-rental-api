@@ -5,13 +5,13 @@ const validationSchema = {
     .valid('development', 'production')
     .default('development'),
   PORT: Joi.number().default(3000),
-  DB_HOST: Joi.string().default('localhost'),
-  DB_PORT: Joi.number().default(5432),
-  DB_USERNAME: Joi.string().required(),
-  DB_PASSWORD: Joi.string().required(),
-  DB_NAME: Joi.string().default('car-sharing'),
-  DB_LOGGING: Joi.string().default(true),
-  DB_AUTORUN_MIGRATIONS: Joi.string().default(true),
+  TYPEORM_HOST: Joi.string().default('localhost'),
+  TYPEORM_PORT: Joi.number().default(5432),
+  TYPEORM_USERNAME: Joi.string().required(),
+  TYPEORM_PASSWORD: Joi.string().required(),
+  TYPEORM_DATABASE: Joi.string().default('car-sharing'),
+  TYPEORM_LOGGING: Joi.boolean().default(true),
+  TYPEORM_MIGRATIONS_RUN: Joi.boolean().default(true),
 };
 
 export default Joi.object(validationSchema);
