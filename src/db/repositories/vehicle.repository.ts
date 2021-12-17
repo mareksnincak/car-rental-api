@@ -2,7 +2,7 @@ import { EntityRepository, Repository } from 'typeorm';
 
 import { Vehicle } from '@entities/vehicle.entity';
 import { TSearchParams } from '@common/types/search.type';
-import { stringToPartialTsQuery } from '@db/db.utils';
+import DbUtils from '@db/db.utils';
 
 @EntityRepository(Vehicle)
 export class VehicleRepository extends Repository<Vehicle> {
@@ -18,7 +18,7 @@ export class VehicleRepository extends Repository<Vehicle> {
       'vehicleModel',
     );
 
-    const tsQuery = stringToPartialTsQuery(query);
+    const tsQuery = DbUtils.stringToPartialTsQuery(query);
     if (tsQuery) {
       qb.andWhere(
         "vehicleModel.searchVector @@ to_tsquery('simple', unaccent(:tsQuery))",

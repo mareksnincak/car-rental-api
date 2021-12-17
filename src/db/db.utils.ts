@@ -15,3 +15,7 @@ export const stringToPartialTsQuery = (query?: string) => {
     .map((term) => `${term}:*`)
     .join(' & ');
 };
+
+export default {
+  stringToPartialTsQuery,
+};
