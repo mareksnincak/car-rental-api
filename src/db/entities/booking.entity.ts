@@ -24,6 +24,9 @@ export class Booking {
   @JoinColumn({ name: 'vehicle_id' })
   vehicle: Vehicle;
 
+  @Column({ nullable: true, name: 'vehicle_id' })
+  vehicleId: string;
+
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
@@ -42,6 +45,7 @@ export class Booking {
     if (includePrivateData) {
       jsonData.id = this.id;
       jsonData.price = this.price;
+      jsonData.vehicleId = this.vehicleId;
     }
 
     return jsonData;

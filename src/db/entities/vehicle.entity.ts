@@ -36,6 +36,9 @@ export class Vehicle {
   @JoinColumn({ name: 'vehicle_model_id' })
   vehicleModel: VehicleModel;
 
+  @Column({ nullable: true, name: 'vehicle_model_id' })
+  vehicleModelId: string;
+
   @OneToMany(() => Booking, (booking) => booking.vehicle)
   bookings: Booking[];
 

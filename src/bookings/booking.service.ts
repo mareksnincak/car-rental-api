@@ -15,7 +15,7 @@ export class BookingService {
 
   async createBooking({ vehicleId, from, to }: TBookingParams) {
     const booking = await this.bookingRepository.createAndSave({
-      vehicle: { id: vehicleId },
+      vehicleId,
       dateRange: new Range(from, to, '[)'),
       price: 10,
     });

@@ -7,4 +7,5 @@ export type TJsonData = {
   to: Date;
   id?: string;
   price?: number;
+  vehicleId?: string;
 };
