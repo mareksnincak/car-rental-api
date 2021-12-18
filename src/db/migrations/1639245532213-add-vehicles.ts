@@ -52,6 +52,16 @@ export class AddVehicles1639245532213 implements MigrationInterface {
             name: 'search_vector',
             type: 'tsvector',
           },
+          {
+            name: 'created_at',
+            type: 'timestamp with time zone',
+            default: 'NOW()',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp with time zone',
+            default: 'NOW()',
+          },
         ],
       }),
       true,
@@ -62,9 +72,15 @@ export class AddVehicles1639245532213 implements MigrationInterface {
         name: 'vehicles',
         columns: [
           {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            default: 'uuid_generate_v4()',
+          },
+          {
             name: 'vin',
             type: 'varchar',
-            isPrimary: true,
+            isUnique: true,
           },
           {
             name: 'vehicle_model_id',
@@ -82,6 +98,16 @@ export class AddVehicles1639245532213 implements MigrationInterface {
             name: 'color',
             type: 'varchar',
           },
+          {
+            name: 'created_at',
+            type: 'timestamp with time zone',
+            default: 'NOW()',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp with time zone',
+            default: 'NOW()',
+          },
         ],
       }),
       true,
@@ -93,7 +119,7 @@ export class AddVehicles1639245532213 implements MigrationInterface {
         columnNames: ['vehicle_model_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'vehicle_models',
-        onDelete: 'RESTRICT',
+        onDelete: 'CASCADE',
       }),
     );
 

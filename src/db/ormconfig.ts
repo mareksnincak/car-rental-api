@@ -1,4 +1,4 @@
-import { ConnectionOptions } from 'typeorm';
+import { ConnectionOptions } from 'typeorm-seeding';
 
 /**
  * We are accessing env variables directly and not using config service
@@ -16,6 +16,8 @@ const ormConfig: ConnectionOptions = {
   synchronize: false,
   logging: process.env.TYPEORM_LOGGING === 'true',
   migrationsRun: process.env.TYPEORM_MIGRATIONS_RUN === 'true',
+  seeds: [`${__dirname}/seeds/*{.ts,.js}`],
+  factories: [`${__dirname}/factories/*{.ts,.js}`],
 };
 
 export default ormConfig;
