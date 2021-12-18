@@ -2,7 +2,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 
 import { VehicleService } from './vehicle.service';
 import { SearchVehiclesDto } from './dtos/search.dto';
-import { GetOneDto } from '@common/dtos/get-one.dto';
+import { GetByIdDto } from '@common/dtos/get-by-id.dto';
 
 @Controller('/vehicles')
 export class VehicleController {
@@ -27,11 +27,11 @@ export class VehicleController {
   }
 
   @Get('/:id')
-  async getDetail(@Param() params: GetOneDto) {
+  async getDetail(@Param() params: GetByIdDto) {
     const { id } = params;
 
-    const detail = await this.vehicleService.getDetail(id);
+    const { vehicle, bookings } = await this.vehicleService.getDetail(id);
 
-    return detail;
+    return { vehicle, bookings };
   }
 }

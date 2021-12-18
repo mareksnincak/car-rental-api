@@ -2,7 +2,7 @@ import { IsEnum, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 import { SearchDto } from '@common/dtos/search.dto';
-import { ESortBy } from '@vehicles/types/search.type';
+import { ESortBy } from '@vehicles/vehicle.type';
 
 export class SearchVehiclesDto extends SearchDto {
   @IsOptional()

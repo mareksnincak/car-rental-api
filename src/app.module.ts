@@ -1,9 +1,16 @@
+import pg from 'pg';
+import pgRange from 'pg-range';
+
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { VehicleModule } from '@vehicles/vehicle.module';
+
 import configValidation from '@common/validations/config.validation';
 import ormConfig from '@db/ormconfig';
+import { VehicleModule } from '@vehicles/vehicle.module';
+import { BookingModule } from './bookings/booking.module';
+
+pgRange.install(pg);
 
 @Module({
   imports: [
@@ -14,6 +21,7 @@ import ormConfig from '@db/ormconfig';
     }),
     TypeOrmModule.forRoot(ormConfig),
     VehicleModule,
+    BookingModule,
   ],
 })
 export class AppModule {}

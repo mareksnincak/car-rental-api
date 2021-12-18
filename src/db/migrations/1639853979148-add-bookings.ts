@@ -2,11 +2,14 @@ import {
   MigrationInterface,
   QueryRunner,
   Table,
+  TableExclusion,
   TableForeignKey,
 } from 'typeorm';
 
 export class AddBookings1639853979148 implements MigrationInterface {
   async up(queryRunner: QueryRunner) {
+    await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "btree_gist";');
+
     await queryRunner.createTable(
       new Table({
         name: 'bookings',
@@ -18,12 +21,8 @@ export class AddBookings1639853979148 implements MigrationInterface {
             default: 'uuid_generate_v4()',
           },
           {
-            name: 'from',
-            type: 'timestamp with time zone',
-          },
-          {
-            name: 'to',
-            type: 'timestamp with time zone',
+            name: 'date_range',
+            type: 'tstzrange',
           },
           {
             name: 'vehicle_id',
@@ -55,6 +54,17 @@ export class AddBookings1639853979148 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'vehicles',
         onDelete: 'RESTRICT',
+      }),
+    );
+
+    /**
+     * We may need to add buffer later https://www.cybertec-postgresql.com/en/postgresql-exclude-beyond-unique/
+     */
+    await queryRunner.createExclusionConstraint(
+      'bookings',
+      new TableExclusion({
+        name: 'overlapping_bookings_constraint',
+        expression: 'USING GIST (vehicle_id WITH =, date_range WITH &&)',
       }),
     );
   }

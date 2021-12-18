@@ -6,13 +6,9 @@ import DbUtils from '@db/db.utils';
 
 @EntityRepository(Vehicle)
 export class VehicleRepository extends Repository<Vehicle> {
-  async search({
-    page,
-    pageSize,
-    sortBy,
-    sortDirection,
-    query,
-  }: TSearchParams) {
+  async search(searchParams: TSearchParams) {
+    const { page, pageSize, sortBy, sortDirection, query } = searchParams;
+
     const qb = this.createQueryBuilder('vehicle').innerJoinAndSelect(
       'vehicle.vehicleModel',
       'vehicleModel',
@@ -36,7 +32,11 @@ export class VehicleRepository extends Repository<Vehicle> {
   async getOneWithFutureBookingsOrFail(id: string) {
     return this.createQueryBuilder('vehicle')
       .innerJoinAndSelect('vehicle.vehicleModel', 'vehicleModel')
-      .leftJoinAndSelect('vehicle.bookings', 'booking', 'booking.to >= NOW()')
+      .leftJoinAndSelect(
+        'vehicle.bookings',
+        'booking',
+        'upper(booking.dateRange) >= NOW()',
+      )
       .where('vehicle.id = :id', { id })
       .getOneOrFail();
   }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { VehicleRepository } from '@repositories/vehicle.repository';
-import { TSearchParams } from './types/search.type';
+import { TSearchParams } from './vehicle.type';
 
 @Injectable()
 export class VehicleService {
