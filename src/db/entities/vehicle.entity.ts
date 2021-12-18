@@ -6,9 +6,11 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { VehicleModel } from '@entities/vehicle-model.entity';
+import { Booking } from '@entities/booking.entity';
 
 @Entity('vehicles')
 export class Vehicle {
@@ -27,9 +29,15 @@ export class Vehicle {
   @Column()
   mileage: number;
 
+  @Column({ name: 'purchase_price', type: 'decimal', precision: 10, scale: 2 })
+  purchasePrice: number;
+
   @ManyToOne(() => VehicleModel)
   @JoinColumn({ name: 'vehicle_model_id' })
   vehicleModel: VehicleModel;
+
+  @OneToMany(() => Booking, (booking) => booking.vehicle)
+  bookings: Booking[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;

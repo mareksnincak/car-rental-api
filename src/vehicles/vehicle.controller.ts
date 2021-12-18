@@ -1,7 +1,8 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 
 import { VehicleService } from './vehicle.service';
 import { SearchVehiclesDto } from './dtos/search.dto';
+import { GetOneDto } from '@common/dtos/get-one.dto';
 
 @Controller('/vehicles')
 export class VehicleController {
@@ -23,5 +24,14 @@ export class VehicleController {
       vehicles,
       pagination,
     };
+  }
+
+  @Get('/:id')
+  async getDetail(@Param() params: GetOneDto) {
+    const { id } = params;
+
+    const detail = await this.vehicleService.getDetail(id);
+
+    return detail;
   }
 }

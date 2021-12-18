@@ -32,4 +32,12 @@ export class VehicleRepository extends Repository<Vehicle> {
       .take(pageSize)
       .getManyAndCount();
   }
+
+  async getOneWithFutureBookingsOrFail(id: string) {
+    return this.createQueryBuilder('vehicle')
+      .innerJoinAndSelect('vehicle.vehicleModel', 'vehicleModel')
+      .leftJoinAndSelect('vehicle.bookings', 'booking', 'booking.to >= NOW()')
+      .where('vehicle.id = :id', { id })
+      .getOneOrFail();
+  }
 }

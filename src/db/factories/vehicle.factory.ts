@@ -13,6 +13,10 @@ define(Vehicle, () => {
     max: new Date().getFullYear(),
   });
   vehicle.mileage = faker.datatype.number(300000);
+  vehicle.purchasePrice = faker.datatype.number({
+    min: 10000,
+    max: 25000,
+  });
 
   return vehicle;
 });

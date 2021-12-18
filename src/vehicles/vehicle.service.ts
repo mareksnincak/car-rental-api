@@ -25,4 +25,15 @@ export class VehicleService {
       },
     };
   }
+
+  async getDetail(id: string) {
+    const vehicle = await this.vehicleRepository.getOneWithFutureBookingsOrFail(
+      id,
+    );
+
+    return {
+      vehicle: vehicle.toJson(),
+      bookings: vehicle.bookings.map((booking) => booking.toJson()),
+    };
+  }
 }

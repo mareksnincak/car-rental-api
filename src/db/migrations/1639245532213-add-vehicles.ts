@@ -46,7 +46,7 @@ export class AddVehicles1639245532213 implements MigrationInterface {
           },
           {
             name: 'power',
-            type: 'smallint',
+            type: 'decimal(6,2)',
           },
           {
             name: 'search_vector',
@@ -97,6 +97,10 @@ export class AddVehicles1639245532213 implements MigrationInterface {
           {
             name: 'color',
             type: 'varchar',
+          },
+          {
+            name: 'purchase_price',
+            type: 'decimal(10,2)',
           },
           {
             name: 'created_at',
