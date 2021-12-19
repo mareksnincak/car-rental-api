@@ -50,6 +50,7 @@ export class AddBookings1639853979148 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'bookings',
       new TableForeignKey({
+        name: 'vehicle_id_fk',
         columnNames: ['vehicle_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'vehicles',

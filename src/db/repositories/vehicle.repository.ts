@@ -1,11 +1,20 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityNotFoundError, EntityRepository, Repository } from 'typeorm';
 
 import { Vehicle } from '@entities/vehicle.entity';
 import { TSearchParams } from '@common/types/search.type';
 import DbUtils from '@db/db.utils';
+import { NotFoundAppException } from '@common/exceptions/not-found.exception';
 
 @EntityRepository(Vehicle)
 export class VehicleRepository extends Repository<Vehicle> {
+  static handleError(error: unknown) {
+    if (error instanceof EntityNotFoundError) {
+      throw new NotFoundAppException('Vehicle', error.message);
+    }
+
+    throw error;
+  }
+
   async search(searchParams: TSearchParams) {
     const { page, pageSize, sortBy, sortDirection, query } = searchParams;
 
@@ -30,14 +39,18 @@ export class VehicleRepository extends Repository<Vehicle> {
   }
 
   async getOneWithFutureBookingsOrFail(id: string) {
-    return this.createQueryBuilder('vehicle')
-      .innerJoinAndSelect('vehicle.vehicleModel', 'vehicleModel')
-      .leftJoinAndSelect(
-        'vehicle.bookings',
-        'booking',
-        'upper(booking.dateRange) >= NOW()',
-      )
-      .where('vehicle.id = :id', { id })
-      .getOneOrFail();
+    try {
+      return await this.createQueryBuilder('vehicle')
+        .innerJoinAndSelect('vehicle.vehicleModel', 'vehicleModel')
+        .leftJoinAndSelect(
+          'vehicle.bookings',
+          'booking',
+          'upper(booking.dateRange) >= NOW()',
+        )
+        .where('vehicle.id = :id', { id })
+        .getOneOrFail();
+    } catch (error) {
+      VehicleRepository.handleError(error);
+    }
   }
 }

@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { SortDirection } from '@common/types/pagination.type';
+import { ESortDirection } from '@common/types/pagination.type';
 
 export class SearchDto {
   @IsOptional()
@@ -32,8 +32,8 @@ export class SearchDto {
 
   @IsOptional()
   @IsString()
-  @IsEnum(SortDirection)
-  sortDirection = SortDirection.asc;
+  @IsEnum(ESortDirection)
+  sortDirection = ESortDirection.asc;
 
   @IsOptional()
   @IsString()

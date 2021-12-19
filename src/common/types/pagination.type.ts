@@ -1,4 +1,4 @@
-export enum SortDirection {
+export enum ESortDirection {
   asc = 'ASC',
   desc = 'DESC',
 }
@@ -7,5 +7,5 @@ export type TPagination = {
   page: number;
   pageSize: number;
   sortBy: string;
-  sortDirection: SortDirection.asc | SortDirection.desc;
+  sortDirection: ESortDirection.asc | ESortDirection.desc;
 };
