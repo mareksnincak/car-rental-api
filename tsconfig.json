@@ -19,11 +19,13 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
     "paths": {
+      "@common/*": ["src/common/*"],
+      "@decorators/*": ["src/common/decorators/*"],
+      "@db/*": ["src/db/*"],
       "@entities/*": ["src/db/entities/*"],
       "@repositories/*": ["src/db/repositories/*"],
-      "@common/*": ["src/common/*"],
       "@vehicles/*": ["src/vehicles/*"],
-      "@db/*": ["src/db/*"],
+      "@bookings/*": ["src/bookings/*"],
     }
   }
 }
