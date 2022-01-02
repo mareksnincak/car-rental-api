@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { VehicleRepository } from '@db/repositories/vehicle.repository';
 import { BookingRepository } from '@repositories/booking.repository';
 import { TBookingParams } from './booking.type';
 
@@ -9,14 +10,31 @@ export class BookingService {
   constructor(
     @InjectRepository(BookingRepository)
     private bookingRepository: BookingRepository,
+    @InjectRepository(VehicleRepository)
+    private vehicleRepository: VehicleRepository,
   ) {}
 
-  async createBooking({ vehicleId, fromDate, toDate }: TBookingParams) {
+  async createBooking({ vehicleId, fromDate, toDate, driver }: TBookingParams) {
+    const vehicle = await this.vehicleRepository.getOneOrFail({
+      where: {
+        id: vehicleId,
+      },
+    });
+
+    const price = vehicle.calculatePrice({
+      fromDate,
+      toDate,
+      driverAge: driver.age,
+    });
+
     const booking = await this.bookingRepository.createAndSaveOrFail({
       vehicleId,
       fromDate,
       toDate,
-      price: 10,
+      priceTotal: price.total,
+      priceDeposit: price.deposit,
+      driverName: driver.name,
+      driverAge: driver.age,
     });
 
     return booking.toJson({ includePrivateData: true });

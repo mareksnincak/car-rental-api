@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Type } from 'class-transformer';
 
 import { Vehicle } from '@entities/vehicle.entity';
 import { TJsonData, TJsonOptions } from '@db/types/booking.type';
@@ -29,8 +30,19 @@ export class Booking {
   @Column({ nullable: true, name: 'vehicle_id' })
   vehicleId: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  price: number;
+  @Column({ name: 'price_total', type: 'decimal', precision: 10, scale: 2 })
+  @Type(() => Number)
+  priceTotal: number;
+
+  @Column({ name: 'price_deposit', type: 'decimal', precision: 10, scale: 2 })
+  @Type(() => Number)
+  priceDeposit: number;
+
+  @Column({ name: 'driver_name', type: 'varchar' })
+  driverName: string;
+
+  @Column({ name: 'driver_age', type: 'integer' })
+  driverAge: number;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;
@@ -46,8 +58,15 @@ export class Booking {
 
     if (includePrivateData) {
       jsonData.id = this.id;
-      jsonData.price = this.price;
+      jsonData.price = {
+        total: this.priceTotal,
+        deposit: this.priceDeposit,
+      };
       jsonData.vehicleId = this.vehicleId;
+      jsonData.driver = {
+        name: this.driverName,
+        age: this.driverAge,
+      };
     }
 
     return jsonData;

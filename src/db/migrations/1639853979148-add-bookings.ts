@@ -33,8 +33,20 @@ export class AddBookings1639853979148 implements MigrationInterface {
             type: 'uuid',
           },
           {
-            name: 'price',
+            name: 'price_total',
             type: 'decimal(10,2)',
+          },
+          {
+            name: 'price_deposit',
+            type: 'decimal(10,2)',
+          },
+          {
+            name: 'driver_name',
+            type: 'varchar',
+          },
+          {
+            name: 'driver_age',
+            type: 'integer',
           },
           {
             name: 'created_at',
