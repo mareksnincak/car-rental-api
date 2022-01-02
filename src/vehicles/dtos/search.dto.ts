@@ -8,6 +8,7 @@ import {
   IsOptional,
   Min,
   MinDate,
+  ValidateIf,
 } from 'class-validator';
 
 import { SearchDto } from '@common/dtos/search.dto';
@@ -19,15 +20,17 @@ import {
 } from '@common/decorators/class-validator';
 
 export class SearchVehiclesDto extends SearchDto {
+  @ValidateIf(({ toDate }) => !!toDate)
   @Type(() => Date)
   @IsDate()
   @MinDate(new Date())
-  fromDate: Date;
+  fromDate?: Date;
 
+  @ValidateIf(({ fromDate }) => !!fromDate)
   @Type(() => Date)
   @IsDate()
   @IsGreater('fromDate')
-  toDate: Date;
+  toDate?: Date;
 
   @IsOptional()
   @Type(() => Number)

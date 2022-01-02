@@ -32,25 +32,10 @@ export class VehicleRepository extends Repository<Vehicle> {
       fuel,
     } = searchParams;
 
-    // TODO fix overlap and add other conditions
-    /**
-     * `(
-          booking IS NULL
-          OR :fromDate >= booking.toDate
-          OR :toDate < booking.fromDate
-        )`,
-     */
     const qb = this.createQueryBuilder('vehicle')
       .innerJoinAndSelect('vehicle.vehicleModel', 'vehicleModel')
       .leftJoin('vehicle.bookings', 'booking')
-      .where(
-        '(booking IS NULL OR NOT (booking.fromDate, booking.toDate) OVERLAPS (:fromDate, :toDate))',
-        {
-          fromDate,
-          toDate,
-        },
-      )
-      .andWhere('vehicleModel.transmission IN (:...transmission)', {
+      .where('vehicleModel.transmission IN (:...transmission)', {
         transmission,
       })
       .andWhere('vehicleModel.fuel IN (:...fuel)', { fuel });
@@ -60,6 +45,16 @@ export class VehicleRepository extends Repository<Vehicle> {
       qb.andWhere(
         "vehicleModel.searchVector @@ to_tsquery('simple', unaccent(:tsQuery))",
         { tsQuery },
+      );
+    }
+
+    if (fromDate && toDate) {
+      qb.where(
+        '(booking IS NULL OR NOT (booking.fromDate, booking.toDate) OVERLAPS (:fromDate, :toDate))',
+        {
+          fromDate,
+          toDate,
+        },
       );
     }
 

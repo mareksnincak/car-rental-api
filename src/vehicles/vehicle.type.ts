@@ -19,8 +19,8 @@ export enum EFuel {
 
 export type TSearchParams = TCommonSearchParams & {
   sortBy: keyof typeof ESortBy;
-  fromDate: Date;
-  toDate: Date;
+  fromDate?: Date;
+  toDate?: Date;
   seatsMin: number;
   seatsMax?: number;
   powerMin: number;
