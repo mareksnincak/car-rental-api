@@ -8,9 +8,17 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import dayjs from 'dayjs';
 
 import { VehicleModel } from '@entities/vehicle-model.entity';
 import { Booking } from '@entities/booking.entity';
+import { Type } from 'class-transformer';
+
+type TCalculatePriceParams = {
+  fromDate: Date;
+  toDate: Date;
+  driverAge: number;
+};
 
 @Entity('vehicles')
 export class Vehicle {
@@ -30,6 +38,7 @@ export class Vehicle {
   mileage: number;
 
   @Column({ name: 'purchase_price', type: 'decimal', precision: 10, scale: 2 })
+  @Type(() => Number)
   purchasePrice: number;
 
   @ManyToOne(() => VehicleModel)
@@ -48,12 +57,25 @@ export class Vehicle {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
 
-  calculateRentalPrice(rentalDays: number) {
-    const rentalPrice = Number(this.purchasePrice) * rentalDays * 0.001;
-    return Number(rentalPrice.toFixed(2));
+  calculatePrice({ fromDate, toDate, driverAge }: TCalculatePriceParams) {
+    const bookingDays = Math.ceil(dayjs(toDate).diff(fromDate, 'days', true));
+
+    const total = this.purchasePrice * bookingDays * 0.001;
+    const deposit = this.purchasePrice / this.mileage / 2 + 1.5 * driverAge;
+
+    return {
+      total: Number(total.toFixed(2)),
+      deposit: Number(deposit.toFixed(2)),
+    };
   }
 
-  toJson({ rentalDays = 1 }: { rentalDays?: number } = {}) {
+  toJson({ driverAge, fromDate, toDate }: Partial<TCalculatePriceParams> = {}) {
+    let price: { total: number; deposit: number } | null = null;
+
+    if (driverAge && fromDate && toDate) {
+      price = this.calculatePrice({ driverAge, fromDate, toDate });
+    }
+
     return {
       id: this.id,
       color: this.color,
@@ -66,7 +88,7 @@ export class Vehicle {
       power: this.vehicleModel.power,
       seats: this.vehicleModel.seats,
       doors: this.vehicleModel.doors,
-      price: this.calculateRentalPrice(rentalDays),
+      price,
     };
   }
 }

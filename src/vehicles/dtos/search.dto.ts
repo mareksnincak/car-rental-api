@@ -35,6 +35,12 @@ export class SearchVehiclesDto extends SearchDto {
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
+  @Min(18)
+  driverAge?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
   @Min(1)
   seatsMin = 1;
 

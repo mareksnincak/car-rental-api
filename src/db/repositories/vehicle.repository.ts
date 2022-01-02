@@ -1,4 +1,9 @@
-import { EntityNotFoundError, EntityRepository, Repository } from 'typeorm';
+import {
+  EntityNotFoundError,
+  EntityRepository,
+  FindOneOptions,
+  Repository,
+} from 'typeorm';
 
 import { Vehicle } from '@entities/vehicle.entity';
 import DbUtils from '@db/db.utils';
@@ -86,6 +91,14 @@ export class VehicleRepository extends Repository<Vehicle> {
         )
         .where('vehicle.id = :id', { id })
         .getOneOrFail();
+    } catch (error) {
+      VehicleRepository.handleError(error);
+    }
+  }
+
+  async getOneOrFail(options?: FindOneOptions<Vehicle>) {
+    try {
+      return await this.findOneOrFail(options);
     } catch (error) {
       VehicleRepository.handleError(error);
     }

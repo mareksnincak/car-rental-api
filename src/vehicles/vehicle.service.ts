@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { VehicleRepository } from '@repositories/vehicle.repository';
-import { TSearchParams } from './vehicle.type';
+import { TCalculatePriceParams, TSearchParams } from './vehicle.type';
 
 @Injectable()
 export class VehicleService {
@@ -11,29 +11,53 @@ export class VehicleService {
     private vehicleRepository: VehicleRepository,
   ) {}
 
-  async search(searchParams: TSearchParams) {
+  async search(searchParams: TSearchParams & { driverAge?: number }) {
     const [vehicles, totalRecordCount] = await this.vehicleRepository.search(
       searchParams,
     );
 
+    const { fromDate, toDate, driverAge, page, pageSize } = searchParams;
+
     return {
-      vehicles: vehicles.map((vehicle) => vehicle.toJson()),
+      vehicles: vehicles.map((vehicle) =>
+        vehicle.toJson({ fromDate, toDate, driverAge }),
+      ),
       pagination: {
-        page: searchParams.page,
-        pageSize: searchParams.pageSize,
+        page,
+        pageSize,
         totalRecordCount,
       },
     };
   }
 
-  async getDetail(id: string) {
+  async getDetail({
+    id,
+    fromDate,
+    toDate,
+    driverAge,
+  }: Partial<TCalculatePriceParams> & { id: string }) {
     const vehicle = await this.vehicleRepository.getOneWithFutureBookingsOrFail(
       id,
     );
 
     return {
-      vehicle: vehicle.toJson(),
+      vehicle: vehicle.toJson({ fromDate, toDate, driverAge }),
       bookings: vehicle.bookings.map((booking) => booking.toJson()),
     };
+  }
+
+  async getPrice({
+    id,
+    fromDate,
+    toDate,
+    driverAge,
+  }: TCalculatePriceParams & { id: string }) {
+    const vehicle = await this.vehicleRepository.getOneOrFail({
+      where: {
+        id,
+      },
+    });
+
+    return vehicle.calculatePrice({ fromDate, toDate, driverAge });
   }
 }

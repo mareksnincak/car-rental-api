@@ -28,3 +28,15 @@ export type TSearchParams = TCommonSearchParams & {
   transmission: ETransmission[];
   fuel: EFuel[];
 };
+
+export type TGetPriceParams = {
+  id: string;
+  fromDate: Date;
+  toDate: Date;
+};
+
+export type TCalculatePriceParams = {
+  fromDate: Date;
+  toDate: Date;
+  driverAge: number;
+};
