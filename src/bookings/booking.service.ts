@@ -1,5 +1,3 @@
-import { Range } from 'pg-range';
-
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -13,10 +11,11 @@ export class BookingService {
     private bookingRepository: BookingRepository,
   ) {}
 
-  async createBooking({ vehicleId, from, to }: TBookingParams) {
+  async createBooking({ vehicleId, fromDate, toDate }: TBookingParams) {
     const booking = await this.bookingRepository.createAndSaveOrFail({
       vehicleId,
-      dateRange: new Range(from, to, '[)'),
+      fromDate,
+      toDate,
       price: 10,
     });
 

@@ -33,7 +33,7 @@ export class AddVehicles1639245532213 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'transmition',
+            name: 'transmission',
             type: 'varchar',
           },
           {

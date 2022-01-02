@@ -9,12 +9,12 @@ export class BookingController {
 
   @Post('/')
   async search(@Body() body: CreateBookingDto) {
-    const { vehicleId, from, to } = body;
+    const { vehicleId, fromDate, toDate } = body;
 
     const booking = await this.bookingService.createBooking({
       vehicleId,
-      from,
-      to,
+      fromDate,
+      toDate,
     });
 
     return {

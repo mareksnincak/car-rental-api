@@ -1,9 +1,9 @@
 import { EntityNotFoundError, EntityRepository, Repository } from 'typeorm';
 
 import { Vehicle } from '@entities/vehicle.entity';
-import { TSearchParams } from '@common/types/search.type';
 import DbUtils from '@db/db.utils';
 import { NotFoundAppException } from '@common/exceptions/not-found.exception';
+import { ESortBy, TSearchParams } from '@vehicles/vehicle.type';
 
 @EntityRepository(Vehicle)
 export class VehicleRepository extends Repository<Vehicle> {
@@ -16,12 +16,44 @@ export class VehicleRepository extends Repository<Vehicle> {
   }
 
   async search(searchParams: TSearchParams) {
-    const { page, pageSize, sortBy, sortDirection, query } = searchParams;
+    const {
+      page,
+      pageSize,
+      sortBy,
+      sortDirection,
+      query,
+      fromDate,
+      toDate,
+      seatsMin,
+      seatsMax,
+      powerMin,
+      powerMax,
+      transmission,
+      fuel,
+    } = searchParams;
 
-    const qb = this.createQueryBuilder('vehicle').innerJoinAndSelect(
-      'vehicle.vehicleModel',
-      'vehicleModel',
-    );
+    // TODO fix overlap and add other conditions
+    /**
+     * `(
+          booking IS NULL
+          OR :fromDate >= booking.toDate
+          OR :toDate < booking.fromDate
+        )`,
+     */
+    const qb = this.createQueryBuilder('vehicle')
+      .innerJoinAndSelect('vehicle.vehicleModel', 'vehicleModel')
+      .leftJoin('vehicle.bookings', 'booking')
+      .where(
+        '(booking IS NULL OR NOT (booking.fromDate, booking.toDate) OVERLAPS (:fromDate, :toDate))',
+        {
+          fromDate,
+          toDate,
+        },
+      )
+      .andWhere('vehicleModel.transmission IN (:...transmission)', {
+        transmission,
+      })
+      .andWhere('vehicleModel.fuel IN (:...fuel)', { fuel });
 
     const tsQuery = DbUtils.stringToPartialTsQuery(query);
     if (tsQuery) {
@@ -31,8 +63,18 @@ export class VehicleRepository extends Repository<Vehicle> {
       );
     }
 
+    qb.andWhere('vehicleModel.seats >= :seatsMin', { seatsMin });
+    if (seatsMax) {
+      qb.andWhere('vehicleModel.seats <= :seatsMax', { seatsMax });
+    }
+
+    qb.andWhere('vehicleModel.power >= :powerMin', { powerMin });
+    if (powerMax) {
+      qb.andWhere('vehicleModel.power <= :powerMax', { powerMax });
+    }
+
     return qb
-      .orderBy(sortBy, sortDirection)
+      .orderBy(ESortBy[sortBy], sortDirection)
       .skip((page - 1) * pageSize)
       .take(pageSize)
       .getManyAndCount();
@@ -45,7 +87,7 @@ export class VehicleRepository extends Repository<Vehicle> {
         .leftJoinAndSelect(
           'vehicle.bookings',
           'booking',
-          'upper(booking.dateRange) >= NOW()',
+          'booking.toDate >= NOW()',
         )
         .where('vehicle.id = :id', { id })
         .getOneOrFail();

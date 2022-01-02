@@ -3,8 +3,8 @@ export type TJsonOptions = {
 };
 
 export type TJsonData = {
-  from: Date;
-  to: Date;
+  fromDate: Date;
+  toDate: Date;
   id?: string;
   price?: number;
   vehicleId?: string;

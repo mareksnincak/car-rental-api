@@ -21,7 +21,7 @@ export class VehicleModel {
   fuel: string;
 
   @Column()
-  transmition: string;
+  transmission: string;
 
   @Column({ type: 'decimal', precision: 6, scale: 2 })
   power: number;

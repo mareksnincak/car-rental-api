@@ -4,13 +4,13 @@ import {
   ValidationArguments,
 } from 'class-validator';
 
-export const IsGreaterThan = (
+export const IsGreater = (
   property: string,
   validationOptions?: ValidationOptions,
 ) => {
   return (object: object, propertyName: string) => {
     registerDecorator({
-      name: 'IsGreaterThan',
+      name: 'IsGreater',
       target: object.constructor,
       propertyName: propertyName,
       constraints: [property],
@@ -24,7 +24,7 @@ export const IsGreaterThan = (
         },
 
         defaultMessage({ property, object, constraints }: ValidationArguments) {
-          return `${property} must be greater than ${object[constraints[0]]}`;
+          return `${property} must be > ${object[constraints[0]]}`;
         },
       },
     });

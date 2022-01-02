@@ -1,3 +1,4 @@
-import { IsGreaterThan } from './is-greater-than.decorator';
+import { IsGreater } from './is-greater.decorator';
+import { IsGreaterOrEqual } from './is-greater-or-equal.decorator';
 
-export { IsGreaterThan };
+export { IsGreater, IsGreaterOrEqual };

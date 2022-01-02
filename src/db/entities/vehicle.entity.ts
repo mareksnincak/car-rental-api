@@ -48,7 +48,12 @@ export class Vehicle {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
 
-  toJson() {
+  calculateRentalPrice(rentalDays: number) {
+    const rentalPrice = Number(this.purchasePrice) * rentalDays * 0.001;
+    return Number(rentalPrice.toFixed(2));
+  }
+
+  toJson({ rentalDays = 1 }: { rentalDays?: number } = {}) {
     return {
       id: this.id,
       color: this.color,
@@ -57,10 +62,11 @@ export class Vehicle {
       make: this.vehicleModel.make,
       model: this.vehicleModel.model,
       fuel: this.vehicleModel.fuel,
-      transmition: this.vehicleModel.transmition,
+      transmission: this.vehicleModel.transmission,
       power: this.vehicleModel.power,
       seats: this.vehicleModel.seats,
       doors: this.vehicleModel.doors,
+      price: this.calculateRentalPrice(rentalDays),
     };
   }
 }

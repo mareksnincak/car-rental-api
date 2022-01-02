@@ -21,8 +21,12 @@ export class AddBookings1639853979148 implements MigrationInterface {
             default: 'uuid_generate_v4()',
           },
           {
-            name: 'date_range',
-            type: 'tstzrange',
+            name: 'from_date',
+            type: 'timestamp with time zone',
+          },
+          {
+            name: 'to_date',
+            type: 'timestamp with time zone',
           },
           {
             name: 'vehicle_id',
@@ -65,8 +69,13 @@ export class AddBookings1639853979148 implements MigrationInterface {
       'bookings',
       new TableExclusion({
         name: 'overlapping_bookings_constraint',
-        expression: 'USING GIST (vehicle_id WITH =, date_range WITH &&)',
+        expression:
+          "USING GIST (vehicle_id WITH =, tstzrange(from_date, to_date, '[)') WITH &&)",
       }),
+    );
+
+    await queryRunner.query(
+      "CREATE INDEX date_range_idx ON bookings(tstzrange(from_date, to_date, '[)'));",
     );
   }
 

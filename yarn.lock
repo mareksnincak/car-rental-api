@@ -983,11 +983,6 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
-"@types/strange@^1.7.1":
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/@types/strange/-/strange-1.7.1.tgz#757f2f7733c4f85faf68e3e3b838f42cc5152a02"
-  integrity sha512-LCZqcMEu0Rsr20KVq/i6iHIYS2Duq+rDyoO+4Eh/SDoOMGKWTwT8PH2TKpfH04jkAbWvX0cJpPJVh4ZcUzwWFg==
-
 "@types/superagent@*":
   version "4.1.13"
   resolved "https://registry.yarnpkg.com/@types/superagent/-/superagent-4.1.13.tgz#0aaa3f4ff9404b94932d1dcdfb7f3d39d23997a0"
@@ -3663,11 +3658,6 @@ lodash.merge@^4.6.2:
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
 
-lodash.partial@^4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/lodash.partial/-/lodash.partial-4.2.1.tgz#49f3d8cfdaa3bff8b3a91d127e923245418961d4"
-  integrity sha1-SfPYz9qjv/izqR0SfpIyRUGJYdQ=
-
 lodash.set@4.3.2:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/lodash.set/-/lodash.set-4.3.2.tgz#d8757b1da807dde24816b0d6a84bea1a76230b23"
@@ -4145,15 +4135,6 @@ pg-protocol@*, pg-protocol@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.5.0.tgz#b5dd452257314565e2d54ab3c132adc46565a6a0"
   integrity sha512-muRttij7H8TqRNu/DxrAJQITO4Ac7RmX3Klyr/9mJEOBeIpgnF8f9jAfRz5d3XwQZl5qBjF9gLsUtMPJE0vezQ==
-
-pg-range@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/pg-range/-/pg-range-1.1.1.tgz#a4508bf72c7f9ce22a451af5aa971b42e162132a"
-  integrity sha512-fUDAvbA1jnahGdUcpXlCUrJOqDIFfsg2vXVMQ3ZsmPxYFr1konQ4ahSMfofV/7rCPE1TmeGlF/QtDJvPCDRjEA==
-  dependencies:
-    "@types/strange" "^1.7.1"
-    lodash.partial "^4.2.1"
-    strange "^1.7.2"
 
 pg-types@^2.1.0, pg-types@^2.2.0:
   version "2.2.0"
@@ -4717,11 +4698,6 @@ stack-utils@^2.0.3:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
   integrity sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=
-
-strange@^1.7.2:
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/strange/-/strange-1.7.2.tgz#bcefaecc37d7637ccb76c2eb0724b36b4e7014de"
-  integrity sha1-vO+uzDfXY3zLdsLrBySza05wFN4=
 
 streamsearch@0.1.2:
   version "0.1.2"

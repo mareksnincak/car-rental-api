@@ -1,1 +1,5 @@
-export type TBookingParams = { vehicleId: string; from: Date; to: Date };
+export type TBookingParams = {
+  vehicleId: string;
+  fromDate: Date;
+  toDate: Date;
+};

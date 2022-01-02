@@ -8,8 +8,16 @@ define(VehicleModel, () => {
 
   vehicleModel.make = faker.vehicle.manufacturer();
   vehicleModel.model = faker.vehicle.model();
-  vehicleModel.fuel = faker.vehicle.fuel();
-  vehicleModel.transmition = faker.random.arrayElement(['automatic', 'manual']);
+  vehicleModel.fuel = faker.random.arrayElement([
+    'petrol',
+    'diesel',
+    'hybrid',
+    'electric',
+  ]);
+  vehicleModel.transmission = faker.random.arrayElement([
+    'automatic',
+    'manual',
+  ]);
   vehicleModel.power = faker.datatype.number({
     min: 30,
     max: 200,

@@ -7,7 +7,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Range } from 'pg-range';
 
 import { Vehicle } from '@entities/vehicle.entity';
 import { TJsonData, TJsonOptions } from '@db/types/booking.type';
@@ -17,8 +16,11 @@ export class Booking {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'date_range', type: 'tstzrange' })
-  dateRange: Range<Date>;
+  @Column({ name: 'from_date', type: 'timestamp with time zone' })
+  fromDate: Date;
+
+  @Column({ name: 'to_date', type: 'timestamp with time zone' })
+  toDate: Date;
 
   @ManyToOne(() => Vehicle)
   @JoinColumn({ name: 'vehicle_id' })
@@ -38,8 +40,8 @@ export class Booking {
 
   toJson({ includePrivateData = false }: TJsonOptions = {}) {
     const jsonData: TJsonData = {
-      from: this.dateRange.begin,
-      to: this.dateRange.end,
+      fromDate: this.fromDate,
+      toDate: this.toDate,
     };
 
     if (includePrivateData) {
