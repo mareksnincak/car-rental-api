@@ -32,6 +32,9 @@ export class VehicleModel {
   @Column()
   doors: number;
 
+  @Column({ name: 'image_url' })
+  imageUrl: string;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;
 
@@ -49,5 +52,5 @@ export class VehicleModel {
     select: false,
     nullable: true,
   })
-  searchVector: any;
+  searchVector: unknown;
 }

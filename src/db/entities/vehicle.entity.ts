@@ -88,6 +88,7 @@ export class Vehicle {
       power: this.vehicleModel.power,
       seats: this.vehicleModel.seats,
       doors: this.vehicleModel.doors,
+      imageUrl: this.vehicleModel.imageUrl,
       price,
     };
   }
