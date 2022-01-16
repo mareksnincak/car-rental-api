@@ -14,10 +14,7 @@ import {
 import { SearchDto } from '@common/dtos/search.dto';
 import { EFuel, ESortBy, ETransmission } from '@vehicles/vehicle.type';
 import { Transform, Type } from 'class-transformer';
-import {
-  IsGreater,
-  IsGreaterOrEqual,
-} from '@common/decorators/class-validator';
+import { IsGreater } from '@common/decorators/class-validator';
 
 export class SearchVehiclesDto extends SearchDto {
   @ValidateIf(({ toDate }) => !!toDate)
@@ -41,13 +38,13 @@ export class SearchVehiclesDto extends SearchDto {
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  @Min(1)
-  seatsMin = 1;
+  @Min(0)
+  seatsMin = 0;
 
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  @IsGreaterOrEqual('seatsMin')
+  @Min(0)
   seatsMax?: number;
 
   @IsOptional()
@@ -59,7 +56,7 @@ export class SearchVehiclesDto extends SearchDto {
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  @IsGreaterOrEqual('powerMin')
+  @Min(0)
   powerMax?: number;
 
   @IsOptional()

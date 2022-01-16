@@ -17,7 +17,7 @@ export class VehicleController {
     );
 
     return {
-      vehicles,
+      data: vehicles,
       pagination,
     };
   }

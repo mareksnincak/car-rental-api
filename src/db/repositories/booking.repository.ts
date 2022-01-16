@@ -9,7 +9,7 @@ import {
 import { Booking } from '@entities/booking.entity';
 import { NotFoundAppException } from '@common/exceptions/not-found.exception';
 import { EPgErrorCode } from '@db/constants/postgres.constants';
-import { EConstraints, EForeignKeys } from '@db/constants/booking.repository';
+import { EConstraints, EForeignKeys } from '@db/constants/booking.constants';
 import { ConflictAppException } from '@common/exceptions/conflict.exception';
 
 @EntityRepository(Booking)
