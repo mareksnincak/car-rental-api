@@ -12,11 +12,11 @@ export class VehicleService {
   ) {}
 
   async search(searchParams: TSearchParams & { driverAge?: number }) {
+    const { fromDate, toDate, driverAge, page, pageSize } = searchParams;
+
     const [vehicles, totalRecordCount] = await this.vehicleRepository.search(
       searchParams,
     );
-
-    const { fromDate, toDate, driverAge, page, pageSize } = searchParams;
 
     return {
       vehicles: vehicles.map((vehicle) =>
