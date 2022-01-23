@@ -16,3 +16,16 @@ export const BODY_STYLES = [
   'pickUp',
   'van',
 ] as const;
+
+export const COLORS = [
+  'white',
+  'black',
+  'gray',
+  'silver',
+  'red',
+  'blue',
+  'brown',
+  'green',
+  'orange',
+  'yellow',
+] as const;
