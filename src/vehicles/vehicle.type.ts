@@ -1,21 +1,14 @@
 import { TSearchParams as TCommonSearchParams } from '@common/types/search.type';
+import {
+  ESortBy,
+  BODY_STYLES,
+  FUELS,
+  TRANSMISSIONS,
+} from './vehicle.constants';
 
-export enum ESortBy {
-  price = 'vehicle.purchasePrice',
-  power = 'vehicleModel.power',
-}
-
-export enum ETransmission {
-  manual = 'manual',
-  automatic = 'automatic',
-}
-
-export enum EFuel {
-  petrol = 'petrol',
-  diesel = 'diesel',
-  hybrid = 'hybrid',
-  electric = 'electric',
-}
+export type TTransmission = typeof TRANSMISSIONS[number];
+export type TFuel = typeof FUELS[number];
+export type TBodyStyle = typeof BODY_STYLES[number];
 
 export type TSearchParams = TCommonSearchParams & {
   sortBy: keyof typeof ESortBy;
@@ -25,8 +18,9 @@ export type TSearchParams = TCommonSearchParams & {
   seatsMax?: number;
   powerMin: number;
   powerMax?: number;
-  transmission: ETransmission[];
-  fuel: EFuel[];
+  transmissions: readonly TTransmission[];
+  fuels: readonly TFuel[];
+  bodyStyles: readonly TBodyStyle[];
 };
 
 export type TGetPriceParams = {

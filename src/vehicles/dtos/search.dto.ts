@@ -2,7 +2,6 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsDate,
-  IsEnum,
   IsIn,
   IsNumber,
   IsOptional,
@@ -12,9 +11,14 @@ import {
 } from 'class-validator';
 
 import { SearchDto } from '@common/dtos/search.dto';
-import { EFuel, ESortBy, ETransmission } from '@vehicles/vehicle.type';
 import { Transform, Type } from 'class-transformer';
 import { IsGreater } from '@common/decorators/class-validator';
+import {
+  ESortBy,
+  BODY_STYLES,
+  FUELS,
+  TRANSMISSIONS,
+} from '@vehicles/vehicle.constants';
 
 export class SearchVehiclesDto extends SearchDto {
   @ValidateIf(({ toDate }) => !!toDate)
@@ -63,15 +67,22 @@ export class SearchVehiclesDto extends SearchDto {
   @Transform(({ value }) => value.split(','))
   @IsArray()
   @ArrayNotEmpty()
-  @IsEnum(ETransmission, { each: true })
-  transmission = Object.values(ETransmission);
+  @IsIn(TRANSMISSIONS, { each: true })
+  transmissions = TRANSMISSIONS;
 
   @IsOptional()
   @Transform(({ value }) => value.split(','))
   @IsArray()
   @ArrayNotEmpty()
-  @IsEnum(EFuel, { each: true })
-  fuel = Object.values(EFuel);
+  @IsIn(FUELS, { each: true })
+  fuels = FUELS;
+
+  @IsOptional()
+  @Transform(({ value }) => value.split(','))
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsIn(BODY_STYLES, { each: true })
+  bodyStyles = BODY_STYLES;
 
   @IsOptional()
   @IsIn(Object.keys(ESortBy))

@@ -85,6 +85,7 @@ export class Vehicle {
       model: this.vehicleModel.model,
       fuel: this.vehicleModel.fuel,
       transmission: this.vehicleModel.transmission,
+      bodyStyle: this.vehicleModel.bodyStyle,
       power: this.vehicleModel.power,
       seats: this.vehicleModel.seats,
       doors: this.vehicleModel.doors,

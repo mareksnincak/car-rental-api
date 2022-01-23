@@ -8,7 +8,8 @@ import {
 import { Vehicle } from '@entities/vehicle.entity';
 import DbUtils from '@db/db.utils';
 import { NotFoundAppException } from '@common/exceptions/not-found.exception';
-import { ESortBy, TSearchParams } from '@vehicles/vehicle.type';
+import { TSearchParams } from '@vehicles/vehicle.type';
+import { ESortBy } from '@vehicles/vehicle.constants';
 
 @EntityRepository(Vehicle)
 export class VehicleRepository extends Repository<Vehicle> {
@@ -33,17 +34,19 @@ export class VehicleRepository extends Repository<Vehicle> {
       seatsMax,
       powerMin,
       powerMax,
-      transmission,
-      fuel,
+      transmissions,
+      fuels,
+      bodyStyles,
     } = searchParams;
 
     const qb = this.createQueryBuilder('vehicle')
       .innerJoinAndSelect('vehicle.vehicleModel', 'vehicleModel')
       .leftJoin('vehicle.bookings', 'booking')
-      .where('vehicleModel.transmission IN (:...transmission)', {
-        transmission,
+      .where('vehicleModel.transmission IN (:...transmissions)', {
+        transmissions,
       })
-      .andWhere('vehicleModel.fuel IN (:...fuel)', { fuel });
+      .andWhere('vehicleModel.fuel IN (:...fuels)', { fuels })
+      .andWhere('vehicleModel.bodyStyle IN (:...bodyStyles)', { bodyStyles });
 
     const tsQuery = DbUtils.stringToPartialTsQuery(query);
     if (tsQuery) {

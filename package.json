@@ -19,6 +19,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "tsc:check-errors": "tsc --noEmit",
     "typeorm:cli": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli --config src/db/ormconfig.ts",
     "typeorm:recreate": "yarn typeorm:cli schema:drop && yarn typeorm:cli migration:run",
     "typeorm:seed": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed --root src/db/ --configName ormconfig.ts"

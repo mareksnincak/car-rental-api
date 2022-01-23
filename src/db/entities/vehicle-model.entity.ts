@@ -1,3 +1,4 @@
+import { TBodyStyle, TFuel, TTransmission } from '@vehicles/vehicle.type';
 import {
   Column,
   CreateDateColumn,
@@ -18,10 +19,13 @@ export class VehicleModel {
   model: string;
 
   @Column()
-  fuel: string;
+  fuel: TFuel;
 
   @Column()
-  transmission: string;
+  transmission: TTransmission;
+
+  @Column({ name: 'body_style' })
+  bodyStyle: TBodyStyle;
 
   @Column({ type: 'decimal', precision: 6, scale: 2 })
   power: number;
