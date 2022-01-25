@@ -4,5 +4,5 @@
 read -p "This will wipe all existing data. Do you want to continue (y/N)? " -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-  docker-compose exec car-sharing-app yarn typeorm:recreate
+  docker-compose exec car-rental-api yarn typeorm:recreate
 fi

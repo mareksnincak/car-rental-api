@@ -1,5 +1,5 @@
 services:
-  car-sharing-postgres:
+  car-rental-postgres:
     image: postgres:14.1-alpine
     ports:
       - 127.0.0.1:5433:5432
@@ -9,7 +9,7 @@ services:
       - pgdata-14:/var/lib/postgresql/data
     restart: always
 
-  car-sharing-app:
+  car-rental-api:
     build: .
     ports:
       - 0.0.0.0:3000:3000
@@ -20,7 +20,7 @@ services:
       - ./src:/app/src
     restart: always
     depends_on:
-      - car-sharing-postgres
+      - car-rental-postgres
 
 volumes:
   pgdata-14:

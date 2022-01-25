@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose exec car-sharing-app yarn typeorm:seed
+docker-compose exec car-rental-api yarn typeorm:seed

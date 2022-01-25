@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose exec car-sharing-app sh
+docker-compose exec car-rental-api sh
