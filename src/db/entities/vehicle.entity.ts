@@ -9,10 +9,10 @@ import {
   OneToMany,
 } from 'typeorm';
 import dayjs from 'dayjs';
+import { Type } from 'class-transformer';
 
 import { VehicleModel } from '@entities/vehicle-model.entity';
 import { Booking } from '@entities/booking.entity';
-import { Type } from 'class-transformer';
 
 type TCalculatePriceParams = {
   fromDate: Date;

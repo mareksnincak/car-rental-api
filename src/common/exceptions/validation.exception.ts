@@ -22,8 +22,6 @@ export class ValidationAppException extends AppException {
       parseValidationError(error),
     );
 
-    console.dir(validationErrors, { depth: 5 });
-
     super(
       {
         code,

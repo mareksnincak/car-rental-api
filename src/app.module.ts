@@ -3,9 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import configValidation from '@common/validations/config.validation';
-import ormConfig from '@db/ormconfig';
 import { VehicleModule } from '@vehicles/vehicle.module';
-import { BookingModule } from './bookings/booking.module';
+import { BookingModule } from '@bookings/booking.module';
+import ormConfig from '../ormconfig';
 
 @Module({
   imports: [

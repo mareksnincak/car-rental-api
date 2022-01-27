@@ -1,4 +1,3 @@
-import { TBodyStyle, TFuel, TTransmission } from '@vehicles/vehicle.type';
 import {
   Column,
   CreateDateColumn,
@@ -6,6 +5,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { TBodyStyle, TFuel, TTransmission } from '@vehicles/vehicle.type';
 
 @Entity('vehicle_models')
 export class VehicleModel {
