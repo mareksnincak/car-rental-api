@@ -7,10 +7,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Type } from 'class-transformer';
 
 import { Vehicle } from '@entities/vehicle.entity';
 import { TJsonData, TJsonOptions } from '@db/types/booking.type';
+import { NumericTransformer } from '@transformers/numeric.transformer';
 
 @Entity('bookings')
 export class Booking {
@@ -23,19 +23,29 @@ export class Booking {
   @Column({ name: 'to_date', type: 'timestamp with time zone' })
   toDate: Date;
 
+  @Column({ nullable: true, name: 'vehicle_id' })
+  vehicleId: string;
+
   @ManyToOne(() => Vehicle)
   @JoinColumn({ name: 'vehicle_id' })
   vehicle: Vehicle;
 
-  @Column({ nullable: true, name: 'vehicle_id' })
-  vehicleId: string;
-
-  @Column({ name: 'price_total', type: 'decimal', precision: 10, scale: 2 })
-  @Type(() => Number)
+  @Column({
+    name: 'price_total',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    transformer: new NumericTransformer(),
+  })
   priceTotal: number;
 
-  @Column({ name: 'price_deposit', type: 'decimal', precision: 10, scale: 2 })
-  @Type(() => Number)
+  @Column({
+    name: 'price_deposit',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    transformer: new NumericTransformer(),
+  })
   priceDeposit: number;
 
   @Column({ name: 'driver_name', type: 'varchar' })

@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 
 import { getTestUrl } from '@test/utils/app.utils';
 import { seedVehicle } from '@test/db/seeders/vehicle.seeder';
-import { useRefreshDatabaseWithMigrations } from '@test/utils/typeorm-seeding.utils';
+import { useMigratedRefreshDatabase } from '@test/utils/typeorm-seeding.utils';
 
 const url = '/vehicles';
 
@@ -14,7 +14,7 @@ describe(`GET ${url}`, () => {
   });
 
   beforeEach(async () => {
-    await useRefreshDatabaseWithMigrations();
+    await useMigratedRefreshDatabase();
   });
 
   it('Should return vehicle', async () => {
@@ -43,17 +43,37 @@ describe(`GET ${url}`, () => {
     expect(vehicle.price).toEqual(null);
   });
 
-  it('Should return multiple vehicles', async () => {
-    const seededVehicles = await Promise.all([seedVehicle(), seedVehicle()]);
+  it('Should return paginated vehicles', async () => {
+    const [{ vehicle: cheapestVehicle }] = await Promise.all([
+      seedVehicle({
+        overrideParams: { purchasePrice: 10000, mileage: 100000 },
+      }),
+      seedVehicle({
+        overrideParams: { purchasePrice: 20000, mileage: 100000 },
+      }),
+      seedVehicle({
+        overrideParams: { purchasePrice: 30000, mileage: 100000 },
+      }),
+    ]);
 
-    const response = await request(getTestUrl()).get(url).expect(200);
+    const response = await request(getTestUrl())
+      .get(url)
+      .query({
+        page: 2,
+        pageSize: 2,
+        sortBy: 'price',
+        sortDirection: 'DESC',
+      })
+      .expect(200);
 
-    const vehicles = response.body.data;
-    expect(vehicles.length).toEqual(2);
+    const { data: vehicles, pagination } = response.body;
 
-    expect(vehicles.map((vehicle) => vehicle.id)).toEqual(
-      expect.arrayContaining(seededVehicles.map(({ vehicle }) => vehicle.id)),
-    );
+    expect(vehicles.length).toEqual(1);
+    expect(vehicles[0].id).toEqual(cheapestVehicle.id);
+
+    expect(pagination.page).toEqual(2);
+    expect(pagination.pageSize).toEqual(2);
+    expect(pagination.totalRecordCount).toEqual(3);
   });
 
   it('Should filter vehicles by search query', async () => {
@@ -76,8 +96,25 @@ describe(`GET ${url}`, () => {
     expect(vehicles[0].id).toEqual(vehicleToMatch.vehicle.id);
   });
 
-  it.skip('Should filter vehicles by availability', async () => {
-    // TODO with bookings
+  it('Should not return unavailable vehicles', async () => {
+    await seedVehicle({
+      bookingsOverrideParams: [
+        {
+          fromDate: new Date('2022-01-10T10:00:00.000Z'),
+          toDate: new Date('2022-01-20T10:00:00.000Z'),
+        },
+      ],
+    });
+
+    const response = await request(getTestUrl())
+      .get(url)
+      .query({
+        fromDate: '2022-01-08T10:00:00.000Z',
+        toDate: '2022-01-10T12:00:00.000Z',
+      })
+      .expect(200);
+
+    expect(response.body.data).toHaveLength(0);
   });
 
   it('Should filter vehicles by number of seats', async () => {

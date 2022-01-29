@@ -85,12 +85,17 @@ export class VehicleRepository extends Repository<Vehicle> {
 
   async getOneWithFutureBookingsOrFail(id: string) {
     try {
+      /**
+       * We pass js date as current date instead of using db NOW()
+       * to be able to mock it in tests
+       */
       return await this.createQueryBuilder('vehicle')
         .innerJoinAndSelect('vehicle.vehicleModel', 'vehicleModel')
         .leftJoinAndSelect(
           'vehicle.bookings',
           'booking',
-          'booking.toDate >= NOW()',
+          'booking.toDate >= :currentDate',
+          { currentDate: new Date() },
         )
         .where('vehicle.id = :id', { id })
         .getOneOrFail();

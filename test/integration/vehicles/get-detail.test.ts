@@ -60,8 +60,30 @@ describe(`GET ${url}/:id`, () => {
     });
   });
 
-  it.skip('Should return vehicle bookings', async () => {
-    // TODO with bookings
+  it('Should return future vehicle bookings', async () => {
+    const { vehicle: seededVehicle } = await seedVehicle({
+      bookingsOverrideParams: [
+        {
+          fromDate: new Date('2021-01-10T10:00:00.000Z'),
+          toDate: new Date('2021-01-20T10:00:00.000Z'),
+        },
+        {
+          fromDate: new Date('2022-01-10T10:00:00.000Z'),
+          toDate: new Date('2022-01-20T10:00:00.000Z'),
+        },
+      ],
+    });
+
+    const response = await request(getTestUrl())
+      .get(`${url}/${seededVehicle.id}`)
+      .expect(200);
+
+    const { bookings } = response.body;
+    expect(bookings.length).toEqual(1);
+
+    const booking = bookings[0];
+    expect(booking.fromDate).toEqual('2022-01-10T10:00:00.000Z');
+    expect(booking.toDate).toEqual('2022-01-20T10:00:00.000Z');
   });
 
   it('Should calculate price when dates and driverAge is specified', async () => {

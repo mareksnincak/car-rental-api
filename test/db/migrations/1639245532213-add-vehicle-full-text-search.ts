@@ -31,6 +31,6 @@ export class AddVehicleFullTextSearch1639245532213
   }
 
   async down(_queryRunner: QueryRunner) {
-    // No need
+    // not needed
   }
 }
