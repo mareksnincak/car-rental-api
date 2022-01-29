@@ -1,12 +1,12 @@
-import { IsDate, IsNumber, Min, MinDate } from 'class-validator';
+import { IsDate, IsNumber, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { IsGreater } from '@common/decorators/class-validator';
+import { IsGreater, MinFn } from '@common/decorators/class-validator';
 
 export class GetPriceDto {
   @Type(() => Date)
   @IsDate()
-  @MinDate(new Date())
+  @MinFn(() => new Date())
   fromDate: Date;
 
   @Type(() => Date)

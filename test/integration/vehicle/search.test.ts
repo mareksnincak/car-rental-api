@@ -21,8 +21,7 @@ describe(`GET ${url}`, () => {
     const { vehicle: seededVehicle, vehicleModel: seededVehicleModel } =
       await seedVehicle();
 
-    const response = await request(getTestUrl()).get(url);
-    expect(response.statusCode).toEqual(200);
+    const response = await request(getTestUrl()).get(url).expect(200);
 
     const vehicles = response.body.data;
     expect(vehicles.length).toEqual(1);
@@ -47,8 +46,7 @@ describe(`GET ${url}`, () => {
   it('Should return multiple vehicles', async () => {
     const seededVehicles = await Promise.all([seedVehicle(), seedVehicle()]);
 
-    const response = await request(getTestUrl()).get(url);
-    expect(response.statusCode).toEqual(200);
+    const response = await request(getTestUrl()).get(url).expect(200);
 
     const vehicles = response.body.data;
     expect(vehicles.length).toEqual(2);
@@ -70,8 +68,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ query: 'mATch Sho' });
-    expect(response.statusCode).toEqual(200);
+      .query({ query: 'mATch Sho' })
+      .expect(200);
 
     const vehicles = response.body.data;
     expect(vehicles.length).toEqual(1);
@@ -97,8 +95,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ seatsMin: 2, seatsMax: 2 });
-    expect(response.statusCode).toEqual(200);
+      .query({ seatsMin: 2, seatsMax: 2 })
+      .expect(200);
 
     const vehicles = response.body.data;
     expect(vehicles.length).toEqual(1);
@@ -120,8 +118,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ powerMin: 70, powerMax: 90 });
-    expect(response.statusCode).toEqual(200);
+      .query({ powerMin: 70, powerMax: 90 })
+      .expect(200);
 
     const vehicles = response.body.data;
     expect(vehicles.length).toEqual(1);
@@ -140,8 +138,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ transmissions: 'manual' });
-    expect(response.statusCode).toEqual(200);
+      .query({ transmissions: 'manual' })
+      .expect(200);
 
     const vehicles = response.body.data;
     expect(vehicles.length).toEqual(1);
@@ -163,8 +161,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ fuels: 'diesel,electric' });
-    expect(response.statusCode).toEqual(200);
+      .query({ fuels: 'diesel,electric' })
+      .expect(200);
 
     const vehicles = response.body.data;
     expect(vehicles.length).toEqual(2);
@@ -191,8 +189,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ bodyStyles: 'sedan,hatchback' });
-    expect(response.statusCode).toEqual(200);
+      .query({ bodyStyles: 'sedan,hatchback' })
+      .expect(200);
 
     const vehicles = response.body.data;
     expect(vehicles.length).toEqual(2);
@@ -215,10 +213,10 @@ describe(`GET ${url}`, () => {
       .get(url)
       .query({
         fromDate,
-        toDate: dayjs(fromDate).add(bookingDays, 'days').toDate(),
+        toDate: dayjs(fromDate).add(bookingDays, 'days').toDate().toISOString(),
         driverAge,
-      });
-    expect(response.statusCode).toEqual(200);
+      })
+      .expect(200);
 
     const { price } = response.body.data[0];
 

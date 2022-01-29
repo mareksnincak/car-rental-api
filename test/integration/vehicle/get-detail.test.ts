@@ -1,11 +1,10 @@
 import request from 'supertest';
-import { useSeeding } from 'typeorm-seeding';
+import { useRefreshDatabase, useSeeding } from 'typeorm-seeding';
 import dayjs from 'dayjs';
 import faker from 'faker';
 
 import { getTestUrl } from '@test/utils/app.utils';
 import { seedVehicle } from '@test/db/seeders/vehicle.seeder';
-import { useRefreshDatabaseWithMigrations } from '@test/utils/typeorm-seeding.utils';
 
 const url = '/vehicles';
 
@@ -15,17 +14,16 @@ describe(`GET ${url}/:id`, () => {
   });
 
   beforeEach(async () => {
-    await useRefreshDatabaseWithMigrations();
+    await useRefreshDatabase();
   });
 
   it('Should return vehicle detail', async () => {
     const { vehicle: seededVehicle, vehicleModel: seededVehicleModel } =
       await seedVehicle();
 
-    const response = await request(getTestUrl()).get(
-      `${url}/${seededVehicle.id}`,
-    );
-    expect(response.statusCode).toEqual(200);
+    const response = await request(getTestUrl())
+      .get(`${url}/${seededVehicle.id}`)
+      .expect(200);
 
     const { vehicle, bookings } = response.body;
 
@@ -50,8 +48,9 @@ describe(`GET ${url}/:id`, () => {
   it('Should return error when vehicle does not exist', async () => {
     const nonExistentId = faker.datatype.uuid();
 
-    const response = await request(getTestUrl()).get(`${url}/${nonExistentId}`);
-    expect(response.statusCode).toEqual(400);
+    const response = await request(getTestUrl())
+      .get(`${url}/${nonExistentId}`)
+      .expect(400);
 
     const { code, type, detail } = response.body;
     expect(code).toEqual(2000);
@@ -76,10 +75,10 @@ describe(`GET ${url}/:id`, () => {
       .get(`${url}/${seededVehicle.id}`)
       .query({
         fromDate,
-        toDate: dayjs(fromDate).add(bookingDays, 'days').toDate(),
+        toDate: dayjs(fromDate).add(bookingDays, 'days').toDate().toISOString(),
         driverAge,
-      });
-    expect(response.statusCode).toEqual(200);
+      })
+      .expect(200);
 
     const { price } = response.body.vehicle;
 
