@@ -20,6 +20,7 @@ const config: Config.InitialOptions = {
     '^@repositories/(.*)$': '<rootDir>/src/db/repositories/$1',
     '^@vehicles/(.*)$': '<rootDir>/src/vehicles/$1',
     '^@bookings/(.*)$': '<rootDir>/src/bookings/$1',
+    '^@transformers/(.*)$': '<rootDir>/src/db/transformers/$1',
   },
   globalSetup: '<rootDir>/test/setup/setup-wrapper.js',
   globalTeardown: '<rootDir>/test/setup/teardown-wrapper.js',

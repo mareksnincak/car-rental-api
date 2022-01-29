@@ -9,10 +9,10 @@ import {
   OneToMany,
 } from 'typeorm';
 import dayjs from 'dayjs';
-import { Type } from 'class-transformer';
 
 import { VehicleModel } from '@entities/vehicle-model.entity';
 import { Booking } from '@entities/booking.entity';
+import { NumericTransformer } from '@transformers/numeric.transformer';
 
 type TCalculatePriceParams = {
   fromDate: Date;
@@ -37,8 +37,13 @@ export class Vehicle {
   @Column()
   mileage: number;
 
-  @Column({ name: 'purchase_price', type: 'decimal', precision: 10, scale: 2 })
-  @Type(() => Number)
+  @Column({
+    name: 'purchase_price',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    transformer: new NumericTransformer(),
+  })
   purchasePrice: number;
 
   @ManyToOne(() => VehicleModel)

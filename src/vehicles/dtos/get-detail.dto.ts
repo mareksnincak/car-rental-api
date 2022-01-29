@@ -1,13 +1,13 @@
-import { IsDate, IsNumber, IsOptional, Min, MinDate } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { IsGreater } from '@common/decorators/class-validator';
+import { IsGreater, MinFn } from '@common/decorators/class-validator';
 
 export class GetDetailDto {
   @IsOptional()
   @Type(() => Date)
   @IsDate()
-  @MinDate(new Date())
+  @MinFn(() => new Date())
   fromDate: Date;
 
   @IsOptional()

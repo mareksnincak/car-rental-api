@@ -15,7 +15,7 @@ services:
     depends_on:
       - car-rental-postgres-test
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=test
       - TYPEORM_USERNAME=test
       - TYPEORM_PASSWORD=test
       - TYPEORM_DATABASE=test

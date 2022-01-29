@@ -4,7 +4,7 @@ import { ELogLevel } from '../constants/logger.constants';
 
 const validationSchema = {
   NODE_ENV: Joi.string()
-    .valid('development', 'production')
+    .valid('test', 'development', 'production')
     .default('development'),
   PORT: Joi.number().default(3000),
   LOG_LEVEL: Joi.string()

@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 
 import { TBodyStyle, TFuel, TTransmission } from '@vehicles/vehicle.type';
+import { NumericTransformer } from '@transformers/numeric.transformer';
 
 @Entity('vehicle_models')
 export class VehicleModel {
@@ -28,7 +29,12 @@ export class VehicleModel {
   @Column({ name: 'body_style' })
   bodyStyle: TBodyStyle;
 
-  @Column({ type: 'decimal', precision: 6, scale: 2 })
+  @Column({
+    type: 'decimal',
+    precision: 6,
+    scale: 2,
+    transformer: new NumericTransformer(),
+  })
   power: number;
 
   @Column()

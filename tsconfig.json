@@ -26,6 +26,7 @@
       "@db/*": ["src/db/*"],
       "@entities/*": ["src/db/entities/*"],
       "@repositories/*": ["src/db/repositories/*"],
+      "@transformers/*": ["src/db/transformers/*"],
       "@vehicles/*": ["src/vehicles/*"],
       "@bookings/*": ["src/bookings/*"],
     },

@@ -8,7 +8,7 @@ import { getLogLevels } from '@common/utils/logger.utils';
 
 import { AppModule } from './app.module';
 
-export async function bootstrap() {
+export async function bootstrap(portOverride?: number) {
   const app = await NestFactory.create(AppModule, { logger: getLogLevels() });
 
   app.useGlobalPipes(
@@ -21,6 +21,6 @@ export async function bootstrap() {
   app.useGlobalFilters(new DefaultExceptionFilter());
 
   const configService = app.get(ConfigService);
-  await app.listen(configService.get('PORT'));
+  await app.listen(portOverride ?? configService.get('PORT'));
   return app;
 }

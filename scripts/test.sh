@@ -1,7 +1,10 @@
 #!/bin/bash
 
+COMPOSE_PROJECT_NAME=car-rental-test
 COMPOSE_FILE_NAME=docker-compose.test.yml
 APP_NAME=car-rental-api-test
+
+export COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME
 
 show_help() {
   local exit_code="${1:-0}"
@@ -20,6 +23,7 @@ rebuild() {
 }
 
 rebuild_without_cache() {
+  docker-compose -f $COMPOSE_FILE_NAME down --rmi local
   docker-compose -f $COMPOSE_FILE_NAME build --no-cache
 }
 

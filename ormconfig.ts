@@ -12,7 +12,10 @@ const ormConfig: ConnectionOptions = {
   password: process.env.TYPEORM_PASSWORD,
   database: process.env.TYPEORM_DATABASE,
   entities: [`${__dirname}/src/db/entities/*.entity.{ts,js}`],
-  migrations: [`${__dirname}/src/db/migrations/*.{ts,js}`],
+  migrations:
+    process.env.NODE_ENV === 'test'
+      ? [`${__dirname}/test/db/migrations/*.{ts,js}`]
+      : [`${__dirname}/src/db/migrations/*.{ts,js}`],
   synchronize: false,
   logging: process.env.TYPEORM_LOGGING === 'true',
   migrationsRun: process.env.TYPEORM_MIGRATIONS_RUN === 'true',

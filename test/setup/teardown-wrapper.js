@@ -3,7 +3,7 @@
  * See https://github.com/facebook/jest/issues/5164
  */
 
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable */
 require('tsconfig-paths/register');
 require('ts-node/register/transpile-only');
 

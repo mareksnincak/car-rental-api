@@ -24,6 +24,7 @@ define(VehicleModel, () => {
     min: 2,
     max: 5,
   });
+  vehicleModel.imageUrl = faker.internet.url();
 
   return vehicleModel;
 });

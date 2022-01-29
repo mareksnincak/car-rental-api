@@ -5,24 +5,21 @@ import {
 } from 'class-validator';
 
 const validate = (value: unknown, args: ValidationArguments) => {
-  const [relatedPropertyName] = args.constraints;
-  const relatedValue = args.object[relatedPropertyName];
-
-  return value > relatedValue;
+  return value > args.constraints[0]();
 };
 
 const defaultMessage = ({ property, constraints }: ValidationArguments) => {
-  return `${property} must be > ${constraints[0]}`;
+  return `${property} must be > ${constraints[0]()}`;
 };
 
-export const IsGreater = (
-  property: string,
+export const MinFn = (
+  minFn: () => unknown,
   validationOptions?: ValidationOptions,
 ) => {
   return ValidateBy(
     {
-      name: 'IsGreater',
-      constraints: [property],
+      name: 'MinFn',
+      constraints: [minFn],
       validator: {
         validate,
         defaultMessage,
