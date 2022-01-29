@@ -41,6 +41,7 @@ describe(`GET ${url}`, () => {
     expect(vehicle.seats).toEqual(seededVehicleModel.seats);
     expect(vehicle.doors).toEqual(seededVehicleModel.doors);
     expect(vehicle.imageUrl).toEqual(seededVehicleModel.imageUrl);
+    expect(vehicle.price).toEqual(null);
   });
 
   it('Should return multiple vehicles', async () => {

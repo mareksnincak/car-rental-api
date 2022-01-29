@@ -21,4 +21,4 @@ services:
       - TYPEORM_DATABASE=test
       - TYPEORM_HOST=car-rental-postgres-test
       - TYPEORM_PORT=5432
-      - LOG_LEVEL=warn
+      - LOG_LEVEL=error
