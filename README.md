@@ -2,6 +2,8 @@
 
 API for renting a car. This project serves as part of the research where participants were asked to code part of car rental company system (search and car booking) based on provided system specification.
 
+Postman: https://documenter.getpostman.com/view/8331704/UVeCR8hU
+
 ## How to run
 
 ### Prerequisites
