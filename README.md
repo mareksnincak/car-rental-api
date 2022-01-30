@@ -1,12 +1,14 @@
+# Car rental API
+
 API for renting a car. This project serves as part of the research where participants were asked to code part of car rental company system (search and car booking) based on provided system specification.
 
-# How to run
+## How to run
 
-## Prerequisites
+### Prerequisites
 - Docker
 - Docker compose
 
-## Running the app
+### Running the app
 
 1. Copy env files and optionally edit them:
     ```bash
@@ -34,7 +36,7 @@ API for renting a car. This project serves as part of the research where partici
     ./scripts/recreate.sh
     ```
 
-## Test
+### Running tests
 
 * Run tests:
     ```bash
