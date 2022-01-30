@@ -5,8 +5,8 @@ API for renting a car. This project serves as part of the research where partici
 ## How to run
 
 ### Prerequisites
-- Docker
-- Docker compose
+- [Docker](https://www.docker.com/get-started)
+- [Docker compose](https://docs.docker.com/compose/install/)
 
 ### Running the app
 
