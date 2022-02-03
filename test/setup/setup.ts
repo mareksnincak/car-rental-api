@@ -6,11 +6,11 @@ import { MOCKED_DATE } from '@test/data/mocks/date.mock';
 
 export default async () => {
   /**
-   * We mock app date to be able to use static date values
-   * and pass validations. In case you don't want to use
-   * dynamic values in your tests create new app instance
-   * for that usecase. Sideeffect of this is that jest total
-   * duration = 0, but tests will run quicker
+   * We mock app date to be able to use static date values and pass validations.
+   * Sideeffect of this is that jest will show  total duration = 0
+   * and it mocking is limited but tests will run quicker.
+   * In case this doesn't suit your test case you can create
+   * new app instance for that specific use case.
    */
   mockdate.set(MOCKED_DATE);
 
