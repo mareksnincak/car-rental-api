@@ -6,6 +6,7 @@ import {
   ArgumentsHost,
   HttpStatus,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { AppException } from '../default.exception';
 import { EXCEPTIONS } from '@common/constants/exception.constants';
@@ -25,6 +26,11 @@ export class DefaultExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
+    if (exception instanceof NotFoundException) {
+      Logger.log(exception);
+      return response.sendStatus(HttpStatus.NOT_FOUND);
+    }
 
     let status = defaultStatus;
     let exceptionData: TExceptionData = defaultExceptionData;
