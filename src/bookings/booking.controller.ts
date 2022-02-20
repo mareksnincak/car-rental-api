@@ -8,7 +8,7 @@ export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
 
   @Post('/')
-  async search(@Body() body: CreateBookingDto) {
+  async createBooking(@Body() body: CreateBookingDto) {
     const { vehicleId, fromDate, toDate, driver } = body;
 
     const booking = await this.bookingService.createBooking({

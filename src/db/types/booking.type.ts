@@ -14,5 +14,7 @@ export type TJsonData = {
   driver?: {
     name: string;
     age: number;
+    email: string;
+    idNumber: string;
   };
 };

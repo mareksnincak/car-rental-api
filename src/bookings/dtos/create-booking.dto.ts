@@ -1,5 +1,6 @@
 import {
   IsDate,
+  IsEmail,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -22,6 +23,15 @@ class DriverDto {
   @IsNumber()
   @Min(18)
   age: number;
+
+  @IsString()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  idNumber: string;
 }
 
 export class CreateBookingDto extends SearchDto {

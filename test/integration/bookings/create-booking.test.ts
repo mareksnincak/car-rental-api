@@ -27,6 +27,8 @@ describe(`POST ${url}`, () => {
     const driver = {
       name: 'Test Driver',
       age: 18,
+      email: 'test.driver@example.com',
+      idNumber: 'EC123456',
     };
     const { vehicle: seededVehicle } = await seedVehicle();
 
@@ -71,6 +73,8 @@ describe(`POST ${url}`, () => {
     expect(booking.toDate.getTime()).toEqual(new Date(toDate).getTime());
     expect(booking.driverName).toEqual(driver.name);
     expect(booking.driverAge).toEqual(driver.age);
+    expect(booking.driverEmail).toEqual(driver.email);
+    expect(booking.driverIdNumber).toEqual(driver.idNumber);
     expect(booking.priceDeposit).toEqual(expectedDeposit);
     expect(booking.priceTotal).toEqual(expectedTotal);
   });
@@ -94,6 +98,8 @@ describe(`POST ${url}`, () => {
         driver: {
           name: 'Test Driver',
           age: 18,
+          email: 'test.driver@example.com',
+          idNumber: 'EC123456',
         },
       })
       .expect(400);
@@ -118,6 +124,8 @@ describe(`POST ${url}`, () => {
         driver: {
           name: 'Test Driver',
           age: 18,
+          email: 'test.driver@example.com',
+          idNumber: 'EC123456',
         },
       })
       .expect(400);

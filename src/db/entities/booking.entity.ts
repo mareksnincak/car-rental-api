@@ -54,6 +54,12 @@ export class Booking {
   @Column({ name: 'driver_age', type: 'integer' })
   driverAge: number;
 
+  @Column({ name: 'driver_email', type: 'varchar' })
+  driverEmail: string;
+
+  @Column({ name: 'driver_id_number', type: 'varchar' })
+  driverIdNumber: string;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;
 
@@ -76,6 +82,8 @@ export class Booking {
       jsonData.driver = {
         name: this.driverName,
         age: this.driverAge,
+        email: this.driverEmail,
+        idNumber: this.driverIdNumber,
       };
     }
 

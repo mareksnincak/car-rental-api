@@ -31,7 +31,7 @@ export class ValidationAppException extends AppException {
           errors,
         },
       },
-      message,
+      `${message}: ${errors}`,
     );
   }
 }
