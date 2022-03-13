@@ -1,10 +1,11 @@
 import request from 'supertest';
-import { useRefreshDatabase, useSeeding } from 'typeorm-seeding';
+import { factory, useRefreshDatabase, useSeeding } from 'typeorm-seeding';
 import dayjs from 'dayjs';
 import faker from 'faker';
 
 import { getTestUrl } from '@test/utils/app.utils';
 import { seedVehicle } from '@test/db/seeders/vehicle.seeder';
+import { User } from '@src/db/entities/user.entity';
 
 const url = '/vehicles/price';
 
@@ -21,6 +22,7 @@ describe(`GET ${url}/:id`, () => {
     const driverAge = 30;
     const bookingDays = 1;
 
+    const user = await factory(User)().create();
     const { vehicle: seededVehicle } = await seedVehicle();
 
     const fromDate = '2022-01-10T10:00:00.000Z';
@@ -31,6 +33,7 @@ describe(`GET ${url}/:id`, () => {
         toDate: dayjs(fromDate).add(bookingDays, 'days').toDate().toISOString(),
         driverAge,
       })
+      .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
     const price = response.body;
@@ -45,6 +48,7 @@ describe(`GET ${url}/:id`, () => {
 
   it('Should return error when vehicle does not exist', async () => {
     const nonExistentId = faker.datatype.uuid();
+    const user = await factory(User)().create();
 
     const response = await request(getTestUrl())
       .get(`${url}/${nonExistentId}`)
@@ -53,6 +57,7 @@ describe(`GET ${url}/:id`, () => {
         toDate: '2022-01-11T10:00:00.000Z',
         driverAge: 30,
       })
+      .set({ 'Api-Key': user.apiKey })
       .expect(400);
 
     const { code, type, detail } = response.body;

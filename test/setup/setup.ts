@@ -3,6 +3,7 @@ import mockdate from 'mockdate';
 
 import { bootstrap } from '@src/app';
 import { MOCKED_DATE } from '@test/data/mocks/date.mock';
+import { initDb } from '@test/utils/typeorm-seeding.utils';
 
 export default async () => {
   /**
@@ -15,6 +16,7 @@ export default async () => {
   mockdate.set(MOCKED_DATE);
 
   const app = await bootstrap();
+  await initDb();
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
   /**

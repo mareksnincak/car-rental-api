@@ -1,4 +1,5 @@
 export type TCreateBookingParams = {
+  userId: string;
   vehicleId: string;
   fromDate: Date;
   toDate: Date;

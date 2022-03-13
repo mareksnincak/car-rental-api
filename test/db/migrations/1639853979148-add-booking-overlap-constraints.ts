@@ -4,8 +4,6 @@ export class AddBookingOverlapConstraints1639853979148
   implements MigrationInterface
 {
   async up(queryRunner: QueryRunner) {
-    await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "btree_gist";');
-
     await queryRunner.createExclusionConstraint(
       'bookings',
       new TableExclusion({

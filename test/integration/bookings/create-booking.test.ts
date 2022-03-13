@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { useSeeding } from 'typeorm-seeding';
+import { factory, useSeeding } from 'typeorm-seeding';
 import { getRepository } from 'typeorm';
 import faker from 'faker';
 
@@ -7,6 +7,7 @@ import { getTestUrl } from '@test/utils/app.utils';
 import { seedVehicle } from '@test/db/seeders/vehicle.seeder';
 import { Booking } from '@src/db/entities/booking.entity';
 import { useMigratedRefreshDatabase } from '@test/utils/typeorm-seeding.utils';
+import { User } from '@src/db/entities/user.entity';
 
 const url = '/bookings';
 
@@ -24,6 +25,7 @@ describe(`POST ${url}`, () => {
     const toDate = '2022-01-14T08:00:00.000Z';
     const bookingDays = 4;
 
+    const user = await factory(User)().create();
     const driver = {
       name: 'Test Driver',
       age: 18,
@@ -40,6 +42,7 @@ describe(`POST ${url}`, () => {
         toDate,
         driver,
       })
+      .set({ 'Api-Key': user.apiKey })
       .expect(201);
 
     const bookingRepository = getRepository(Booking);
@@ -67,7 +70,10 @@ describe(`POST ${url}`, () => {
     expect(bookingResponse.price.deposit).toEqual(expectedDeposit);
     expect(bookingResponse.price.total).toEqual(expectedTotal);
 
-    const booking = await bookingRepository.findOne({ id: bookingResponse.id });
+    const booking = await bookingRepository.findOne({
+      id: bookingResponse.id,
+      user,
+    });
     expect(booking).toBeTruthy();
     expect(booking.fromDate.getTime()).toEqual(new Date(fromDate).getTime());
     expect(booking.toDate.getTime()).toEqual(new Date(toDate).getTime());
@@ -80,6 +86,7 @@ describe(`POST ${url}`, () => {
   });
 
   it("Should return error when vehicle isn't available", async () => {
+    const user = await factory(User)().create();
     const { vehicle: seededVehicle } = await seedVehicle({
       bookingsOverrideParams: [
         {
@@ -102,6 +109,7 @@ describe(`POST ${url}`, () => {
           idNumber: 'EC123456',
         },
       })
+      .set({ 'Api-Key': user.apiKey })
       .expect(400);
 
     const { code, type, detail } = response.body;
@@ -114,6 +122,7 @@ describe(`POST ${url}`, () => {
 
   it('Should return error when vehicle does not exist', async () => {
     const nonExistentId = faker.datatype.uuid();
+    const user = await factory(User)().create();
 
     const response = await request(getTestUrl())
       .post(url)
@@ -128,6 +137,7 @@ describe(`POST ${url}`, () => {
           idNumber: 'EC123456',
         },
       })
+      .set({ 'Api-Key': user.apiKey })
       .expect(400);
 
     const { code, type, detail } = response.body;

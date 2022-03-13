@@ -15,6 +15,7 @@ export class BookingService {
   ) {}
 
   async createBooking({
+    userId,
     vehicleId,
     fromDate,
     toDate,
@@ -33,6 +34,7 @@ export class BookingService {
     });
 
     const booking = await this.bookingRepository.createAndSaveOrFail({
+      userId,
       vehicleId,
       fromDate,
       toDate,

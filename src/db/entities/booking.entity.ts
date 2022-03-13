@@ -11,6 +11,7 @@ import {
 import { Vehicle } from '@entities/vehicle.entity';
 import { TJsonData, TJsonOptions } from '@db/types/booking.type';
 import { NumericTransformer } from '@transformers/numeric.transformer';
+import { User } from './user.entity';
 
 @Entity('bookings')
 export class Booking {
@@ -29,6 +30,13 @@ export class Booking {
   @ManyToOne(() => Vehicle)
   @JoinColumn({ name: 'vehicle_id' })
   vehicle: Vehicle;
+
+  @Column({ nullable: true, name: 'user_id' })
+  userId: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @Column({
     name: 'price_total',

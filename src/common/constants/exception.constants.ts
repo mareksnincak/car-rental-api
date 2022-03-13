@@ -3,6 +3,10 @@ export const EXCEPTIONS = {
     code: 1,
     type: 'unknown',
   },
+  unauthorized: {
+    code: 10,
+    type: 'unauthorized',
+  },
   validation: {
     code: 1000,
     type: 'validation',

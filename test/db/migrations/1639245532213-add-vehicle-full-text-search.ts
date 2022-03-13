@@ -4,8 +4,6 @@ export class AddVehicleFullTextSearch1639245532213
   implements MigrationInterface
 {
   async up(queryRunner: QueryRunner) {
-    await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "unaccent";');
-
     await queryRunner.query(`
       CREATE OR REPLACE FUNCTION update_vehicle_models_search_vector()
       RETURNS trigger AS $$
