@@ -27,6 +27,7 @@ export class BookingService {
         order: {
           [ESortBy[sortBy]]: sortDirection,
         },
+        skip: (page - 1) * pageSize,
         take: pageSize,
         relations: ['vehicle', 'vehicle.vehicleModel'],
       });

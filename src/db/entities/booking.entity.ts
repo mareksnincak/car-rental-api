@@ -75,16 +75,12 @@ export class Booking {
   updatedAt: Date;
 
   toJson({ includePrivateData = false }: TJsonOptions = {}) {
-    const { fromDate, toDate, driverAge } = this;
+    const { fromDate, toDate } = this;
 
     const jsonData: TBookingJson = {
       fromDate,
       toDate,
-      vehicle: this.vehicle?.toJson({
-        driverAge,
-        fromDate,
-        toDate,
-      }),
+      vehicle: this.vehicle?.toJson(),
     };
 
     if (includePrivateData) {
