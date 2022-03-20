@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { VehicleRepository } from '@db/repositories/vehicle.repository';
 import { BookingRepository } from '@repositories/booking.repository';
 import { TCreateBookingParams } from './booking.type';
+import { TPagination } from '@src/common/types/pagination.type';
+import { ESortBy } from './booking.constants';
 
 @Injectable()
 export class BookingService {
@@ -13,6 +15,33 @@ export class BookingService {
     @InjectRepository(VehicleRepository)
     private vehicleRepository: VehicleRepository,
   ) {}
+
+  async getBookings(userId: string, paginationParams: TPagination) {
+    const { page, pageSize, sortBy, sortDirection } = paginationParams;
+
+    const [bookings, totalRecordCount] =
+      await this.bookingRepository.findAndCount({
+        where: {
+          userId,
+        },
+        order: {
+          [ESortBy[sortBy]]: sortDirection,
+        },
+        take: pageSize,
+        relations: ['vehicle', 'vehicle.vehicleModel'],
+      });
+
+    return {
+      bookings: bookings.map((booking) =>
+        booking.toJson({ includePrivateData: true }),
+      ),
+      pagination: {
+        page,
+        pageSize,
+        totalRecordCount,
+      },
+    };
+  }
 
   async createBooking({
     userId,

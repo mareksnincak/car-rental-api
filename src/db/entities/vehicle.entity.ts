@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 import { VehicleModel } from '@entities/vehicle-model.entity';
 import { Booking } from '@entities/booking.entity';
 import { NumericTransformer } from '@transformers/numeric.transformer';
+import { TVehicleJson, TVehiclePriceJson } from '../types/vehicle.type';
 
 type TCalculatePriceParams = {
   fromDate: Date;
@@ -74,8 +75,12 @@ export class Vehicle {
     };
   }
 
-  toJson({ driverAge, fromDate, toDate }: Partial<TCalculatePriceParams> = {}) {
-    let price: { total: number; deposit: number } | null = null;
+  toJson({
+    driverAge,
+    fromDate,
+    toDate,
+  }: Partial<TCalculatePriceParams> = {}): TVehicleJson {
+    let price: TVehiclePriceJson = null;
 
     if (driverAge && fromDate && toDate) {
       price = this.calculatePrice({ driverAge, fromDate, toDate });

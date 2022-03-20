@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 import { Vehicle } from '@entities/vehicle.entity';
-import { TJsonData, TJsonOptions } from '@db/types/booking.type';
+import { TBookingJson, TJsonOptions } from '@db/types/booking.type';
 import { NumericTransformer } from '@transformers/numeric.transformer';
 import { User } from './user.entity';
 
@@ -75,9 +75,16 @@ export class Booking {
   updatedAt: Date;
 
   toJson({ includePrivateData = false }: TJsonOptions = {}) {
-    const jsonData: TJsonData = {
-      fromDate: this.fromDate,
-      toDate: this.toDate,
+    const { fromDate, toDate, driverAge } = this;
+
+    const jsonData: TBookingJson = {
+      fromDate,
+      toDate,
+      vehicle: this.vehicle?.toJson({
+        driverAge,
+        fromDate,
+        toDate,
+      }),
     };
 
     if (includePrivateData) {
@@ -86,7 +93,6 @@ export class Booking {
         total: this.priceTotal,
         deposit: this.priceDeposit,
       };
-      jsonData.vehicleId = this.vehicleId;
       jsonData.driver = {
         name: this.driverName,
         age: this.driverAge,
