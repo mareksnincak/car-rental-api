@@ -68,6 +68,13 @@ export class Booking {
   @Column({ name: 'driver_id_number', type: 'varchar' })
   driverIdNumber: string;
 
+  @Column({
+    name: 'returned_at',
+    type: 'timestamp with time zone',
+    nullable: true,
+  })
+  returnedAt: Date | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;
 
@@ -95,6 +102,7 @@ export class Booking {
         email: this.driverEmail,
         idNumber: this.driverIdNumber,
       };
+      jsonData.returnedAt = this.returnedAt;
     }
 
     return jsonData;

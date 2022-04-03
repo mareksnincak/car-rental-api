@@ -20,4 +20,5 @@ export type TBookingJson = {
     idNumber: string;
   };
   vehicle?: TVehicleJson;
+  returnedAt?: Date | null;
 };

@@ -47,6 +47,9 @@ describe(`POST ${url}`, () => {
     expect(booking.id).toEqual(seededBooking.id);
     expect(booking.fromDate).toEqual(seededBooking.fromDate.toISOString());
     expect(booking.toDate).toEqual(seededBooking.toDate.toISOString());
+    expect(booking.returnedAt).toEqual(
+      seededBooking.returnedAt?.toISOString() ?? null,
+    );
 
     const { price, driver, vehicle } = booking;
     expect(price.total).toEqual(seededBooking.priceTotal);
