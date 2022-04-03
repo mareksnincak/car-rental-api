@@ -4,8 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { VehicleRepository } from '@db/repositories/vehicle.repository';
 import { BookingRepository } from '@repositories/booking.repository';
 import { TCreateBookingParams } from './booking.type';
-import { TPagination } from '@src/common/types/pagination.type';
-import { ESortBy } from './booking.constants';
 
 @Injectable()
 export class BookingService {
@@ -16,32 +14,21 @@ export class BookingService {
     private vehicleRepository: VehicleRepository,
   ) {}
 
-  async getBookings(userId: string, paginationParams: TPagination) {
-    const { page, pageSize, sortBy, sortDirection } = paginationParams;
-
-    const [bookings, totalRecordCount] =
-      await this.bookingRepository.findAndCount({
-        where: {
-          userId,
-        },
-        order: {
-          [ESortBy[sortBy]]: sortDirection,
-        },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-        relations: ['vehicle', 'vehicle.vehicleModel'],
-      });
-
-    return {
-      bookings: bookings.map((booking) =>
-        booking.toJson({ includePrivateData: true }),
-      ),
-      pagination: {
-        page,
-        pageSize,
-        totalRecordCount,
+  async getCurrentBookings(userId: string) {
+    const bookings = await this.bookingRepository.find({
+      where: {
+        userId,
+        returnedAt: null,
       },
-    };
+      order: {
+        createdAt: 'ASC',
+      },
+      relations: ['vehicle', 'vehicle.vehicleModel'],
+    });
+
+    return bookings.map((booking) =>
+      booking.toJson({ includePrivateData: true }),
+    );
   }
 
   async createBooking({

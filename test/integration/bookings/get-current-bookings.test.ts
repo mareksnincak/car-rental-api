@@ -6,9 +6,9 @@ import { seedVehicle } from '@test/db/seeders/vehicle.seeder';
 import { useMigratedRefreshDatabase } from '@test/utils/typeorm-seeding.utils';
 import { User } from '@src/db/entities/user.entity';
 
-const url = '/bookings';
+const url = '/bookings/current';
 
-describe(`POST ${url}`, () => {
+describe(`GET ${url}`, () => {
   beforeAll(async () => {
     await useSeeding();
   });
@@ -17,7 +17,7 @@ describe(`POST ${url}`, () => {
     await useMigratedRefreshDatabase();
   });
 
-  it('Should get bookings', async () => {
+  it('Should get current bookings', async () => {
     const user = await factory(User)().create();
     const {
       vehicle: seededVehicle,
@@ -29,6 +29,7 @@ describe(`POST ${url}`, () => {
           fromDate: new Date('2022-01-17T06:00:00.000Z'),
           toDate: new Date('2022-01-18T10:00:00.000Z'),
           userId: user.id,
+          returnedAt: null,
         },
       ],
     });
@@ -47,9 +48,7 @@ describe(`POST ${url}`, () => {
     expect(booking.id).toEqual(seededBooking.id);
     expect(booking.fromDate).toEqual(seededBooking.fromDate.toISOString());
     expect(booking.toDate).toEqual(seededBooking.toDate.toISOString());
-    expect(booking.returnedAt).toEqual(
-      seededBooking.returnedAt?.toISOString() ?? null,
-    );
+    expect(booking.returnedAt).toEqual(null);
 
     const { price, driver, vehicle } = booking;
     expect(price.total).toEqual(seededBooking.priceTotal);
@@ -76,7 +75,7 @@ describe(`POST ${url}`, () => {
     expect(vehicle.price).toEqual(null);
   });
 
-  it('Should get multiple bookings', async () => {
+  it('Should get multiple current bookings', async () => {
     const user = await factory(User)().create();
     await Promise.all([
       seedVehicle({
@@ -86,12 +85,14 @@ describe(`POST ${url}`, () => {
             fromDate: new Date('2022-01-17T06:00:00.000Z'),
             toDate: new Date('2022-01-18T10:00:00.000Z'),
             userId: user.id,
+            returnedAt: null,
           },
           {
             id: '00f018b3-84d2-4fd9-bbee-471741c7d802',
             fromDate: new Date('2022-02-17T06:00:00.000Z'),
             toDate: new Date('2022-02-18T10:00:00.000Z'),
             userId: user.id,
+            returnedAt: null,
           },
         ],
       }),
@@ -102,6 +103,7 @@ describe(`POST ${url}`, () => {
             fromDate: new Date('2022-03-17T06:00:00.000Z'),
             toDate: new Date('2022-03-18T10:00:00.000Z'),
             userId: user.id,
+            returnedAt: null,
           },
         ],
       }),
@@ -114,57 +116,35 @@ describe(`POST ${url}`, () => {
 
     const bookings = response.body.data;
     expect(bookings).toHaveLength(3);
-    expect(bookings.map((booking: { id: string }) => booking.id)).toEqual([
-      '00f018b3-84d2-4fd9-bbee-471741c7d801',
-      '00f018b3-84d2-4fd9-bbee-471741c7d802',
-      '00f018b3-84d2-4fd9-bbee-471741c7d803',
-    ]);
+
+    const bookingIds = bookings.map((booking) => booking.id);
+    expect(bookingIds).toContain('00f018b3-84d2-4fd9-bbee-471741c7d801');
+    expect(bookingIds).toContain('00f018b3-84d2-4fd9-bbee-471741c7d802');
+    expect(bookingIds).toContain('00f018b3-84d2-4fd9-bbee-471741c7d803');
   });
 
-  it('Should return paginated bookings', async () => {
+  it('Should not get already returned bookings', async () => {
     const user = await factory(User)().create();
     await seedVehicle({
       bookingsOverrideParams: [
         {
           id: '00f018b3-84d2-4fd9-bbee-471741c7d803',
-          fromDate: new Date('2022-03-17T06:00:00.000Z'),
-          toDate: new Date('2022-03-18T10:00:00.000Z'),
+          fromDate: new Date('2021-03-17T06:00:00.000Z'),
+          toDate: new Date('2021-03-18T10:00:00.000Z'),
           userId: user.id,
-        },
-        {
-          id: '00f018b3-84d2-4fd9-bbee-471741c7d801',
-          fromDate: new Date('2022-01-17T06:00:00.000Z'),
-          toDate: new Date('2022-01-18T10:00:00.000Z'),
-          userId: user.id,
-        },
-        {
-          id: '00f018b3-84d2-4fd9-bbee-471741c7d802',
-          fromDate: new Date('2022-02-17T06:00:00.000Z'),
-          toDate: new Date('2022-02-18T10:00:00.000Z'),
-          userId: user.id,
+          returnedAt: new Date('2021-03-18T10:00:00.000Z'),
         },
       ],
     });
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({
-        page: 2,
-        pageSize: 2,
-        sortBy: 'fromDate',
-        sortDirection: 'DESC',
-      })
       .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
-    const { data: bookings, pagination } = response.body;
+    const bookings = response.body.data;
 
-    expect(bookings.length).toEqual(1);
-    expect(bookings[0].id).toEqual('00f018b3-84d2-4fd9-bbee-471741c7d801');
-
-    expect(pagination.page).toEqual(2);
-    expect(pagination.pageSize).toEqual(2);
-    expect(pagination.totalRecordCount).toEqual(3);
+    expect(bookings.length).toEqual(0);
   });
 
   it("Should not get other user's bookings", async () => {

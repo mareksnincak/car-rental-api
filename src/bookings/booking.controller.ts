@@ -1,28 +1,20 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { Locals } from '@src/common/decorators/express/locals.decorator';
 import { User } from '@src/db/entities/user.entity';
 
 import { BookingService } from './booking.service';
 import { CreateBookingDto } from './dtos/create-booking.dto';
-import { GetBookingsDto } from './dtos/get-bookings.dto';
 
 @Controller('/bookings')
 export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
 
-  @Get('/')
-  async getBookings(
-    @Locals('user') user: User,
-    @Query() queryParams: GetBookingsDto,
-  ) {
-    const { bookings, pagination } = await this.bookingService.getBookings(
-      user.id,
-      queryParams,
-    );
+  @Get('/current')
+  async getCurrentBookings(@Locals('user') user: User) {
+    const bookings = await this.bookingService.getCurrentBookings(user.id);
 
     return {
       data: bookings,
-      pagination,
     };
   }
 
