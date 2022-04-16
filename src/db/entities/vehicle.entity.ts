@@ -8,17 +8,19 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import dayjs from 'dayjs';
 
 import { VehicleModel } from '@entities/vehicle-model.entity';
 import { Booking } from '@entities/booking.entity';
 import { NumericTransformer } from '@transformers/numeric.transformer';
 import { TVehicleJson, TVehiclePriceJson } from '../types/vehicle.type';
+import DateUtils from '@src/common/utils/date.utils';
 
 type TCalculatePriceParams = {
   fromDate: Date;
   toDate: Date;
   driverAge: number;
+  returnDate?: Date;
+  discountPercentage?: number;
 };
 
 @Entity('vehicles')
@@ -63,11 +65,31 @@ export class Vehicle {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
 
-  calculatePrice({ fromDate, toDate, driverAge }: TCalculatePriceParams) {
-    const bookingDays = Math.ceil(dayjs(toDate).diff(fromDate, 'days', true));
+  calculatePrice({
+    fromDate,
+    toDate,
+    driverAge,
+    returnDate,
+    discountPercentage,
+  }: TCalculatePriceParams) {
+    const bookingDays = DateUtils.getCeiledDifferenceInDays(fromDate, toDate);
 
-    const total = this.purchasePrice * bookingDays * 0.001;
+    let total = this.purchasePrice * bookingDays * 0.001;
     const deposit = this.purchasePrice / this.mileage / 2 + 1.5 * driverAge;
+
+    if (returnDate && returnDate > toDate) {
+      const returnDelayDays = DateUtils.getCeiledDifferenceInDays(
+        fromDate,
+        toDate,
+      );
+      const delayFine = returnDelayDays * 100;
+
+      total += delayFine;
+    }
+
+    if (discountPercentage) {
+      total = total * ((100 - discountPercentage) / 100);
+    }
 
     return {
       total: Number(total.toFixed(2)),

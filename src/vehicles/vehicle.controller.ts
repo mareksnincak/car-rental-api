@@ -4,7 +4,7 @@ import { VehicleService } from './vehicle.service';
 import { SearchVehiclesDto } from './dtos/search.dto';
 import { GetPriceDto } from './dtos/get-price.dto';
 import { GetDetailDto } from './dtos/get-detail.dto';
-import { GetByIdDto } from '@common/dtos/get-by-id.dto';
+import { IdDto } from '@src/common/dtos/id.dto';
 
 @Controller('/vehicles')
 export class VehicleController {
@@ -23,7 +23,7 @@ export class VehicleController {
   }
 
   @Get('/:id')
-  async getDetail(@Param() params: GetByIdDto, @Query() query: GetDetailDto) {
+  async getDetail(@Param() params: IdDto, @Query() query: GetDetailDto) {
     const { id } = params;
     const { fromDate, toDate, driverAge } = query;
 
@@ -38,7 +38,7 @@ export class VehicleController {
   }
 
   @Get('/price/:id')
-  async getPrice(@Param() params: GetByIdDto, @Query() query: GetPriceDto) {
+  async getPrice(@Param() params: IdDto, @Query() query: GetPriceDto) {
     const { id } = params;
     const { fromDate, toDate, driverAge } = query;
 

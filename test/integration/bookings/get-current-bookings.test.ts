@@ -26,8 +26,8 @@ describe(`GET ${url}`, () => {
     } = await seedVehicle({
       bookingsOverrideParams: [
         {
-          fromDate: new Date('2022-01-17T06:00:00.000Z'),
-          toDate: new Date('2022-01-18T10:00:00.000Z'),
+          fromDate: new Date('2022-01-01T08:00:00.000Z'),
+          toDate: new Date('2022-01-10T08:00:00.000Z'),
           userId: user.id,
           returnedAt: null,
         },
@@ -82,15 +82,8 @@ describe(`GET ${url}`, () => {
         bookingsOverrideParams: [
           {
             id: '00f018b3-84d2-4fd9-bbee-471741c7d801',
-            fromDate: new Date('2022-01-17T06:00:00.000Z'),
-            toDate: new Date('2022-01-18T10:00:00.000Z'),
-            userId: user.id,
-            returnedAt: null,
-          },
-          {
-            id: '00f018b3-84d2-4fd9-bbee-471741c7d802',
-            fromDate: new Date('2022-02-17T06:00:00.000Z'),
-            toDate: new Date('2022-02-18T10:00:00.000Z'),
+            fromDate: new Date('2022-01-01T08:00:00.000Z'),
+            toDate: new Date('2022-01-10T08:00:00.000Z'),
             userId: user.id,
             returnedAt: null,
           },
@@ -99,9 +92,9 @@ describe(`GET ${url}`, () => {
       seedVehicle({
         bookingsOverrideParams: [
           {
-            id: '00f018b3-84d2-4fd9-bbee-471741c7d803',
-            fromDate: new Date('2022-03-17T06:00:00.000Z'),
-            toDate: new Date('2022-03-18T10:00:00.000Z'),
+            id: '00f018b3-84d2-4fd9-bbee-471741c7d802',
+            fromDate: new Date('2022-01-01T08:00:00.000Z'),
+            toDate: new Date('2022-01-10T08:00:00.000Z'),
             userId: user.id,
             returnedAt: null,
           },
@@ -115,12 +108,11 @@ describe(`GET ${url}`, () => {
       .expect(200);
 
     const bookings = response.body.data;
-    expect(bookings).toHaveLength(3);
+    expect(bookings).toHaveLength(2);
 
     const bookingIds = bookings.map((booking) => booking.id);
     expect(bookingIds).toContain('00f018b3-84d2-4fd9-bbee-471741c7d801');
     expect(bookingIds).toContain('00f018b3-84d2-4fd9-bbee-471741c7d802');
-    expect(bookingIds).toContain('00f018b3-84d2-4fd9-bbee-471741c7d803');
   });
 
   it('Should not get already returned bookings', async () => {

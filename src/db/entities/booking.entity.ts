@@ -81,14 +81,20 @@ export class Booking {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
 
-  toJson({ includePrivateData = false }: TJsonOptions = {}) {
+  toJson({
+    includePrivateData = false,
+    includeVehicle = false,
+  }: TJsonOptions = {}) {
     const { fromDate, toDate } = this;
 
     const jsonData: TBookingJson = {
       fromDate,
       toDate,
-      vehicle: this.vehicle?.toJson(),
     };
+
+    if (includeVehicle) {
+      jsonData.vehicle = this.vehicle.toJson();
+    }
 
     if (includePrivateData) {
       jsonData.id = this.id;

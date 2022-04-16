@@ -1,7 +1,15 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { Locals } from '@src/common/decorators/express/locals.decorator';
-import { User } from '@src/db/entities/user.entity';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 
+import { Locals } from '@src/common/decorators/express/locals.decorator';
+import { IdDto } from '@src/common/dtos/id.dto';
+import { User } from '@src/db/entities/user.entity';
 import { BookingService } from './booking.service';
 import { CreateBookingDto } from './dtos/create-booking.dto';
 
@@ -33,8 +41,16 @@ export class BookingController {
       driver,
     });
 
-    return {
-      booking,
-    };
+    return booking;
+  }
+
+  @Post('/returns')
+  @HttpCode(HttpStatus.OK)
+  async returnBooking(@Locals('user') user: User, @Body() body: IdDto) {
+    const { id } = body;
+
+    const booking = await this.bookingService.returnBooking(user.id, id);
+
+    return booking;
   }
 }

@@ -2,6 +2,7 @@ import { TVehicleJson } from './vehicle.type';
 
 export type TJsonOptions = {
   includePrivateData?: boolean;
+  includeVehicle?: boolean;
 };
 
 export type TBookingJson = {

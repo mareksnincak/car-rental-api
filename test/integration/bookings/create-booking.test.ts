@@ -58,7 +58,7 @@ describe(`POST ${url}`, () => {
       ).toFixed(2),
     );
 
-    const bookingResponse = response.body.booking;
+    const bookingResponse = response.body;
     expect(bookingResponse.id).toBeTruthy();
     expect(new Date(bookingResponse.fromDate).getTime()).toEqual(
       new Date(fromDate).getTime(),
