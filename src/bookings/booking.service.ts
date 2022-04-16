@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MoreThanOrEqual } from 'typeorm';
 
 import { VehicleRepository } from '@db/repositories/vehicle.repository';
 import { BookingRepository } from '@repositories/booking.repository';
@@ -18,6 +19,7 @@ export class BookingService {
     const bookings = await this.bookingRepository.find({
       where: {
         userId,
+        fromDate: MoreThanOrEqual(new Date()),
         returnedAt: null,
       },
       order: {
