@@ -79,8 +79,8 @@ export class Vehicle {
 
     if (returnDate && returnDate > toDate) {
       const returnDelayDays = DateUtils.getCeiledDifferenceInDays(
-        fromDate,
         toDate,
+        returnDate,
       );
       const delayFine = returnDelayDays * 100;
 

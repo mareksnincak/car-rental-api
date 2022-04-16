@@ -1,9 +1,8 @@
 import request from 'supertest';
-import { factory, useSeeding } from 'typeorm-seeding';
+import { factory, useRefreshDatabase, useSeeding } from 'typeorm-seeding';
 
 import { getTestUrl } from '@test/utils/app.utils';
 import { seedVehicle } from '@test/db/seeders/vehicle.seeder';
-import { useMigratedRefreshDatabase } from '@test/utils/typeorm-seeding.utils';
 import { User } from '@src/db/entities/user.entity';
 
 const url = '/bookings/current';
@@ -14,7 +13,7 @@ describe(`GET ${url}`, () => {
   });
 
   beforeEach(async () => {
-    await useMigratedRefreshDatabase();
+    await useRefreshDatabase();
   });
 
   it('Should get current bookings', async () => {
