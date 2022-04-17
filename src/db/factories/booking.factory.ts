@@ -14,10 +14,6 @@ define(Booking, () => {
     .toDate();
   booking.priceTotal = faker.datatype.number(500);
   booking.priceDeposit = faker.datatype.number(500);
-  booking.driverAge = faker.datatype.number(70);
-  booking.driverName = faker.random.words(2);
-  booking.driverEmail = faker.internet.exampleEmail();
-  booking.driverIdNumber = faker.random.word();
 
   return booking;
 });

@@ -14,12 +14,6 @@ export type TBookingJson = {
     total: number;
     deposit: number;
   };
-  driver?: {
-    name: string;
-    age: number;
-    email: string;
-    idNumber: string;
-  };
   vehicle?: TVehicleJson;
   returnedAt?: Date | null;
 };

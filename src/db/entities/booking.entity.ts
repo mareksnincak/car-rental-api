@@ -56,18 +56,6 @@ export class Booking {
   })
   priceDeposit: number;
 
-  @Column({ name: 'driver_name', type: 'varchar' })
-  driverName: string;
-
-  @Column({ name: 'driver_age', type: 'integer' })
-  driverAge: number;
-
-  @Column({ name: 'driver_email', type: 'varchar' })
-  driverEmail: string;
-
-  @Column({ name: 'driver_id_number', type: 'varchar' })
-  driverIdNumber: string;
-
   @Column({
     name: 'returned_at',
     type: 'timestamp with time zone',
@@ -101,12 +89,6 @@ export class Booking {
       jsonData.price = {
         total: this.priceTotal,
         deposit: this.priceDeposit,
-      };
-      jsonData.driver = {
-        name: this.driverName,
-        age: this.driverAge,
-        email: this.driverEmail,
-        idNumber: this.driverIdNumber,
       };
       jsonData.returnedAt = this.returnedAt;
     }

@@ -59,14 +59,9 @@ describe(`POST ${url}`, () => {
     expect(booking.returnedAt).toEqual(MOCKED_DATE);
 
     const expectedTotalPrice = purchasePrice * bookingDays * 0.001;
-    const { price, driver } = booking;
+    const { price } = booking;
     expect(price.total).toEqual(expectedTotalPrice);
     expect(price.deposit).toEqual(seededBooking.priceDeposit);
-
-    expect(driver.name).toEqual(seededBooking.driverName);
-    expect(driver.age).toEqual(seededBooking.driverAge);
-    expect(driver.email).toEqual(seededBooking.driverEmail);
-    expect(driver.idNumber).toEqual(seededBooking.driverIdNumber);
 
     const bookingRecord = await getRepository(Booking).findOneOrFail();
     expect(bookingRecord.priceTotal).toEqual(expectedTotalPrice);

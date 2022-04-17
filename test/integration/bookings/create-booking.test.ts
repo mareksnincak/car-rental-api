@@ -24,15 +24,12 @@ describe(`POST ${url}`, () => {
 
   it('Should create booking', async () => {
     const bookingDays = 4;
+    const driverAge = 20;
     const toDate = dayjs(MOCKED_DATE).add(4, 'days').toISOString();
 
-    const user = await factory(User)().create();
-    const driver = {
-      name: 'Test Driver',
-      age: 18,
-      email: 'test.driver@example.com',
-      idNumber: 'EC123456',
-    };
+    const user = await factory(User)().create({
+      dateOfBirth: dayjs(MOCKED_DATE).add(-driverAge, 'years').toDate(),
+    });
     const { vehicle: seededVehicle } = await seedVehicle();
 
     const response = await request(getTestUrl())
@@ -40,7 +37,6 @@ describe(`POST ${url}`, () => {
       .send({
         vehicleId: seededVehicle.id,
         toDate,
-        driver,
       })
       .set({ 'Api-Key': user.apiKey })
       .expect(201);
@@ -54,7 +50,7 @@ describe(`POST ${url}`, () => {
     const expectedDeposit = Number(
       (
         seededVehicle.purchasePrice / seededVehicle.mileage / 2 +
-        1.5 * driver.age
+        1.5 * driverAge
       ).toFixed(2),
     );
 
@@ -66,7 +62,6 @@ describe(`POST ${url}`, () => {
     expect(new Date(bookingResponse.toDate).getTime()).toEqual(
       new Date(toDate).getTime(),
     );
-    expect(bookingResponse.driver).toEqual(driver);
     expect(bookingResponse.price.deposit).toEqual(expectedDeposit);
     expect(bookingResponse.price.total).toEqual(expectedTotal);
 
@@ -77,10 +72,6 @@ describe(`POST ${url}`, () => {
     expect(booking).toBeTruthy();
     expect(booking.fromDate.getTime()).toEqual(new Date(MOCKED_DATE).getTime());
     expect(booking.toDate.getTime()).toEqual(new Date(toDate).getTime());
-    expect(booking.driverName).toEqual(driver.name);
-    expect(booking.driverAge).toEqual(driver.age);
-    expect(booking.driverEmail).toEqual(driver.email);
-    expect(booking.driverIdNumber).toEqual(driver.idNumber);
     expect(booking.priceDeposit).toEqual(expectedDeposit);
     expect(booking.priceTotal).toEqual(expectedTotal);
   });

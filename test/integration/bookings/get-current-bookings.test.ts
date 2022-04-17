@@ -49,14 +49,9 @@ describe(`GET ${url}`, () => {
     expect(booking.toDate).toEqual(seededBooking.toDate.toISOString());
     expect(booking.returnedAt).toEqual(null);
 
-    const { price, driver, vehicle } = booking;
+    const { price, vehicle } = booking;
     expect(price.total).toEqual(seededBooking.priceTotal);
     expect(price.deposit).toEqual(seededBooking.priceDeposit);
-
-    expect(driver.name).toEqual(seededBooking.driverName);
-    expect(driver.age).toEqual(seededBooking.driverAge);
-    expect(driver.email).toEqual(seededBooking.driverEmail);
-    expect(driver.idNumber).toEqual(seededBooking.driverIdNumber);
 
     expect(vehicle.id).toEqual(seededVehicle.id);
     expect(vehicle.color).toEqual(seededVehicle.color);

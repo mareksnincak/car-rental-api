@@ -22,15 +22,3 @@ export type TSearchParams = TCommonSearchParams & {
   fuels: readonly TFuel[];
   bodyStyles: readonly TBodyStyle[];
 };
-
-export type TGetPriceParams = {
-  id: string;
-  fromDate: Date;
-  toDate: Date;
-};
-
-export type TCalculatePriceParams = {
-  fromDate: Date;
-  toDate: Date;
-  driverAge: number;
-};

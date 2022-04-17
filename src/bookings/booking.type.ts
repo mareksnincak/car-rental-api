@@ -1,12 +1,8 @@
+import { User } from '@src/db/entities/user.entity';
+
 export type TCreateBookingParams = {
-  userId: string;
+  user: User;
   vehicleId: string;
   fromDate: Date;
   toDate: Date;
-  driver: {
-    name: string;
-    age: number;
-    email: string;
-    idNumber: string;
-  };
 };

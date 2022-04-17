@@ -19,7 +19,7 @@ describe(`GET ${url}`, () => {
     await useMigratedRefreshDatabase();
   });
 
-  it('Should return vehicle', async () => {
+  it('Should return vehicle search result', async () => {
     const user = await factory(User)().create();
     const { vehicle: seededVehicle, vehicleModel: seededVehicleModel } =
       await seedVehicle();
@@ -47,7 +47,6 @@ describe(`GET ${url}`, () => {
     expect(vehicle.seats).toEqual(seededVehicleModel.seats);
     expect(vehicle.doors).toEqual(seededVehicleModel.doors);
     expect(vehicle.imageUrl).toEqual(seededVehicleModel.imageUrl);
-    expect(vehicle.price).toEqual(null);
   });
 
   it('Should return paginated vehicles', async () => {
@@ -262,11 +261,13 @@ describe(`GET ${url}`, () => {
     );
   });
 
-  it('Should calculate price when dates and driverAge is specified', async () => {
+  it('Should calculate price', async () => {
     const driverAge = 30;
     const bookingDays = 1;
 
-    const user = await factory(User)().create();
+    const user = await factory(User)().create({
+      dateOfBirth: dayjs(MOCKED_DATE).add(-driverAge, 'years').toDate(),
+    });
     const { vehicle: seededVehicle } = await seedVehicle();
 
     const response = await request(getTestUrl())
@@ -276,7 +277,6 @@ describe(`GET ${url}`, () => {
           .add(bookingDays, 'days')
           .toDate()
           .toISOString(),
-        driverAge,
       })
       .set({ 'Api-Key': user.apiKey })
       .expect(200);

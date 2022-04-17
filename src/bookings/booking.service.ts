@@ -7,6 +7,7 @@ import { BookingRepository } from '@repositories/booking.repository';
 import { TCreateBookingParams } from './booking.type';
 import { BookingUtils } from './booking.utils';
 import { UnprocessableEntityAppException } from '@src/common/exceptions/unprocessable-entity.exception';
+import { User } from '@src/db/entities/user.entity';
 
 @Injectable()
 export class BookingService {
@@ -38,11 +39,10 @@ export class BookingService {
   }
 
   async createBooking({
-    userId,
+    user,
     vehicleId,
     fromDate,
     toDate,
-    driver,
   }: TCreateBookingParams) {
     const vehicle = await this.vehicleRepository.getOneOrFail({
       where: {
@@ -53,31 +53,27 @@ export class BookingService {
     const price = vehicle.calculatePrice({
       fromDate,
       toDate,
-      driverAge: driver.age,
+      driverAge: user.getAge(fromDate),
     });
 
     const booking = await this.bookingRepository.createAndSaveOrFail({
-      userId,
+      userId: user.id,
       vehicleId,
       fromDate,
       toDate,
       priceTotal: price.total,
       priceDeposit: price.deposit,
-      driverName: driver.name,
-      driverAge: driver.age,
-      driverEmail: driver.email,
-      driverIdNumber: driver.idNumber,
     });
 
     return booking.toJson({ includePrivateData: true });
   }
 
   async returnBooking({
-    userId,
+    user,
     bookingId,
     mileage,
   }: {
-    userId: string;
+    user: User;
     bookingId: string;
     mileage: number;
   }) {
@@ -90,13 +86,13 @@ export class BookingService {
         bookingRepository.getOneOrFail({
           where: {
             id: bookingId,
-            userId,
+            userId: user,
             fromDate: LessThanOrEqual(returnDate),
             returnedAt: IsNull(),
           },
           relations: ['vehicle'],
         }),
-        bookingRepository.getSumOfReturnedBookings(userId),
+        bookingRepository.getSumOfReturnedBookings(user.id),
       ]);
 
       const { vehicle } = booking;
@@ -106,7 +102,7 @@ export class BookingService {
       const price = vehicle.calculatePrice({
         fromDate: booking.fromDate,
         toDate: booking.toDate,
-        driverAge: booking.driverAge,
+        driverAge: user.getAge(booking.fromDate),
         returnDate,
         discountPercentage,
       });

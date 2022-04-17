@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -11,6 +12,15 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'varchar', name: 'first_name' })
+  firstName: string;
+
+  @Column({ type: 'varchar', name: 'last_name' })
+  lastName: string;
+
+  @Column({ type: 'timestamp with time zone', name: 'date_of_birth' })
+  dateOfBirth: Date;
+
   @Column({
     name: 'api_key',
     default: () => "encode(gen_random_bytes(32), 'hex')",
@@ -22,4 +32,8 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
+
+  getAge(atDate = new Date()) {
+    return dayjs(atDate).diff(this.dateOfBirth, 'years');
+  }
 }
