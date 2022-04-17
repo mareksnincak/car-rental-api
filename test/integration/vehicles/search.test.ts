@@ -129,6 +129,33 @@ describe(`GET ${url}`, () => {
     expect(response.body.data).toHaveLength(0);
   });
 
+  it('Should not return unavailable vehicles that had multiple bookings', async () => {
+    const user = await factory(User)().create();
+    await seedVehicle({
+      bookingsOverrideParams: [
+        {
+          fromDate: new Date('2022-01-10T10:00:00.000Z'),
+          toDate: new Date('2022-01-20T10:00:00.000Z'),
+        },
+        {
+          fromDate: new Date('2021-01-10T10:00:00.000Z'),
+          toDate: new Date('2021-01-20T10:00:00.000Z'),
+          returnedAt: new Date('2021-01-20T10:00:00.000Z'),
+        },
+      ],
+    });
+
+    const response = await request(getTestUrl())
+      .get(url)
+      .query({
+        toDate: '2022-01-10T12:00:00.000Z',
+      })
+      .set({ 'Api-Key': user.apiKey })
+      .expect(200);
+
+    expect(response.body.data).toHaveLength(0);
+  });
+
   it('Should return vehicle that was returned sooner', async () => {
     const user = await factory(User)().create();
     await seedVehicle({
