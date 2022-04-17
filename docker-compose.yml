@@ -10,14 +10,13 @@ services:
     restart: always
 
   car-rental-api:
-    build: .
+    build:
+      context: ./
+      dockerfile: Dockerfile.production
     ports:
       - 0.0.0.0:3000:3000
-      - 127.0.0.1:9229:9229
     env_file:
       - ./env/app.env
-    volumes:
-      - ./src:/app/src
     restart: always
     depends_on:
       - car-rental-postgres
