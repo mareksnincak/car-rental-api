@@ -19,4 +19,8 @@ export const EXCEPTIONS = {
     code: 2001,
     type: 'conflict',
   },
+  unprocessableEntity: {
+    code: 2002,
+    type: 'unprocessable_entity',
+  },
 } as const;

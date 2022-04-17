@@ -1,13 +1,13 @@
 import request from 'supertest';
 import { factory, useRefreshDatabase, useSeeding } from 'typeorm-seeding';
+import dayjs from 'dayjs';
+import faker from 'faker';
+import { getRepository } from 'typeorm';
 
 import { getTestUrl } from '@test/utils/app.utils';
 import { seedVehicle } from '@test/db/seeders/vehicle.seeder';
 import { User } from '@src/db/entities/user.entity';
 import { MOCKED_DATE } from '@test/data/mocks/date.mock';
-import dayjs from 'dayjs';
-import faker from 'faker';
-import { getRepository } from 'typeorm';
 import { Booking } from '@src/db/entities/booking.entity';
 
 const url = '/bookings/returns';
@@ -152,8 +152,8 @@ describe(`POST ${url}`, () => {
     );
   });
 
-  it.skip('Should throw error when reported vehicle mileage is lower then before', async () => {
-    const [user, otherUser] = await factory(User)().createMany(2);
+  it('Should throw error when reported vehicle mileage is lower then before', async () => {
+    const user = await factory(User)().create();
     const { bookings: seededBookings } = await seedVehicle({
       overrideParams: {
         mileage: 100000,
@@ -162,12 +162,13 @@ describe(`POST ${url}`, () => {
         {
           fromDate: new Date('2022-01-01T08:00:00.000Z'),
           toDate: new Date('2022-02-01T08:00:00.000Z'),
-          userId: otherUser.id,
+          userId: user.id,
+          returnedAt: null,
         },
       ],
     });
 
-    await request(getTestUrl())
+    const response = await request(getTestUrl())
       .post(url)
       .send({
         id: seededBookings[0].id,
@@ -175,6 +176,14 @@ describe(`POST ${url}`, () => {
       })
       .set({ 'Api-Key': user.apiKey })
       .expect(400);
+
+    const { code, type, detail } = response.body;
+    expect(code).toEqual(2002);
+    expect(type).toEqual('unprocessable_entity');
+    expect(detail.resource).toEqual('Vehicle');
+
+    const booking = await getRepository(Booking).findOneOrFail();
+    expect(booking.returnedAt).toEqual(null);
   });
 
   it('Should return error when booking does not exist', async () => {

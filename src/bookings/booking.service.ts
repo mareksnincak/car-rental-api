@@ -1,4 +1,4 @@
-import { IsNull, LessThanOrEqual } from 'typeorm';
+import { Connection, IsNull, LessThanOrEqual } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -6,10 +6,12 @@ import { VehicleRepository } from '@db/repositories/vehicle.repository';
 import { BookingRepository } from '@repositories/booking.repository';
 import { TCreateBookingParams } from './booking.type';
 import { BookingUtils } from './booking.utils';
+import { UnprocessableEntityAppException } from '@src/common/exceptions/unprocessable-entity.exception';
 
 @Injectable()
 export class BookingService {
   constructor(
+    private connection: Connection,
     @InjectRepository(BookingRepository)
     private bookingRepository: BookingRepository,
     @InjectRepository(VehicleRepository)
@@ -70,40 +72,70 @@ export class BookingService {
     return booking.toJson({ includePrivateData: true });
   }
 
-  async returnBooking(userId: string, bookingId: string) {
-    const returnDate = new Date();
+  async returnBooking({
+    userId,
+    bookingId,
+    mileage,
+  }: {
+    userId: string;
+    bookingId: string;
+    mileage: number;
+  }) {
+    return this.connection.transaction(async (manager) => {
+      const bookingRepository = manager.getCustomRepository(BookingRepository);
+      const vehicleRepository = manager.getCustomRepository(VehicleRepository);
 
-    const [booking, spentAmount] = await Promise.all([
-      this.bookingRepository.getOneOrFail({
-        where: {
-          id: bookingId,
-          userId,
-          fromDate: LessThanOrEqual(returnDate),
-          returnedAt: IsNull(),
-        },
-        relations: ['vehicle'],
-      }),
-      this.bookingRepository.getSumOfReturnedBookings(userId),
-    ]);
+      const returnDate = new Date();
+      const [booking, spentAmount] = await Promise.all([
+        bookingRepository.getOneOrFail({
+          where: {
+            id: bookingId,
+            userId,
+            fromDate: LessThanOrEqual(returnDate),
+            returnedAt: IsNull(),
+          },
+          relations: ['vehicle'],
+        }),
+        bookingRepository.getSumOfReturnedBookings(userId),
+      ]);
 
-    const discountPercentage =
-      this.bookingUtils.getDiscountPercentage(spentAmount);
+      const { vehicle } = booking;
+      const discountPercentage =
+        this.bookingUtils.getDiscountPercentage(spentAmount);
 
-    const price = booking.vehicle.calculatePrice({
-      fromDate: booking.fromDate,
-      toDate: booking.toDate,
-      driverAge: booking.driverAge,
-      returnDate,
-      discountPercentage,
+      const price = vehicle.calculatePrice({
+        fromDate: booking.fromDate,
+        toDate: booking.toDate,
+        driverAge: booking.driverAge,
+        returnDate,
+        discountPercentage,
+      });
+
+      booking.priceTotal = price.total;
+      booking.returnedAt = returnDate;
+
+      const [vehicleUpdateResult] = await Promise.all([
+        vehicleRepository.update(
+          {
+            id: vehicle.id,
+            mileage: LessThanOrEqual(mileage),
+          },
+          {
+            mileage,
+          },
+        ),
+        bookingRepository.save(booking),
+      ]);
+
+      if (!vehicleUpdateResult.affected) {
+        throw new UnprocessableEntityAppException({
+          responseMessage: 'Invalid mileage.',
+          resource: 'Vehicle',
+          logMessage: `Invalid mileage ${mileage} for vehicle ${vehicle.id}. Booking ${booking.id}`,
+        });
+      }
+
+      return booking.toJson({ includePrivateData: true });
     });
-
-    booking.priceTotal = price.total;
-    booking.returnedAt = returnDate;
-    await this.bookingRepository.save(booking);
-
-    // TODO update vehicle mileage -> run all in transaction
-    // TODO add tests
-
-    return booking.toJson({ includePrivateData: true });
   }
 }

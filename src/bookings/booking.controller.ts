@@ -8,10 +8,10 @@ import {
 } from '@nestjs/common';
 
 import { Locals } from '@src/common/decorators/express/locals.decorator';
-import { IdDto } from '@src/common/dtos/id.dto';
 import { User } from '@src/db/entities/user.entity';
 import { BookingService } from './booking.service';
 import { CreateBookingDto } from './dtos/create-booking.dto';
+import { ReturnBookingDto } from './dtos/return-booking.dto';
 
 @Controller('/bookings')
 export class BookingController {
@@ -46,10 +46,17 @@ export class BookingController {
 
   @Post('/returns')
   @HttpCode(HttpStatus.OK)
-  async returnBooking(@Locals('user') user: User, @Body() body: IdDto) {
-    const { id } = body;
+  async returnBooking(
+    @Locals('user') user: User,
+    @Body() body: ReturnBookingDto,
+  ) {
+    const { id, mileage } = body;
 
-    const booking = await this.bookingService.returnBooking(user.id, id);
+    const booking = await this.bookingService.returnBooking({
+      userId: user.id,
+      bookingId: id,
+      mileage,
+    });
 
     return booking;
   }
