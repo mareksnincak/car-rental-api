@@ -12,7 +12,7 @@ import {
 import { Type } from 'class-transformer';
 
 import { SearchDto } from '@common/dtos/search.dto';
-import { IsGreater, MinFn } from '@common/decorators/class-validator';
+import { MinFn } from '@common/decorators/class-validator';
 
 class DriverDto {
   @IsString()
@@ -41,11 +41,6 @@ export class CreateBookingDto extends SearchDto {
   @Type(() => Date)
   @IsDate()
   @MinFn(() => new Date())
-  fromDate: Date;
-
-  @Type(() => Date)
-  @IsDate()
-  @IsGreater('fromDate')
   toDate: Date;
 
   @Type(() => DriverDto)

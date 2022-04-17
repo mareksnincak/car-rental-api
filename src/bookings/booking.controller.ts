@@ -31,12 +31,12 @@ export class BookingController {
     @Locals('user') user: User,
     @Body() body: CreateBookingDto,
   ) {
-    const { vehicleId, fromDate, toDate, driver } = body;
+    const { vehicleId, toDate, driver } = body;
 
     const booking = await this.bookingService.createBooking({
       userId: user.id,
       vehicleId,
-      fromDate,
+      fromDate: new Date(),
       toDate,
       driver,
     });

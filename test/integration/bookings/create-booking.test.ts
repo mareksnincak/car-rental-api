@@ -8,6 +8,8 @@ import { seedVehicle } from '@test/db/seeders/vehicle.seeder';
 import { Booking } from '@src/db/entities/booking.entity';
 import { useMigratedRefreshDatabase } from '@test/utils/typeorm-seeding.utils';
 import { User } from '@src/db/entities/user.entity';
+import { MOCKED_DATE } from '@test/data/mocks/date.mock';
+import dayjs from 'dayjs';
 
 const url = '/bookings';
 
@@ -21,9 +23,8 @@ describe(`POST ${url}`, () => {
   });
 
   it('Should create booking', async () => {
-    const fromDate = '2022-01-10T10:00:00.000Z';
-    const toDate = '2022-01-14T08:00:00.000Z';
     const bookingDays = 4;
+    const toDate = dayjs(MOCKED_DATE).add(4, 'days').toISOString();
 
     const user = await factory(User)().create();
     const driver = {
@@ -38,7 +39,6 @@ describe(`POST ${url}`, () => {
       .post(url)
       .send({
         vehicleId: seededVehicle.id,
-        fromDate,
         toDate,
         driver,
       })
@@ -61,7 +61,7 @@ describe(`POST ${url}`, () => {
     const bookingResponse = response.body;
     expect(bookingResponse.id).toBeTruthy();
     expect(new Date(bookingResponse.fromDate).getTime()).toEqual(
-      new Date(fromDate).getTime(),
+      new Date(MOCKED_DATE).getTime(),
     );
     expect(new Date(bookingResponse.toDate).getTime()).toEqual(
       new Date(toDate).getTime(),
@@ -75,7 +75,7 @@ describe(`POST ${url}`, () => {
       user,
     });
     expect(booking).toBeTruthy();
-    expect(booking.fromDate.getTime()).toEqual(new Date(fromDate).getTime());
+    expect(booking.fromDate.getTime()).toEqual(new Date(MOCKED_DATE).getTime());
     expect(booking.toDate.getTime()).toEqual(new Date(toDate).getTime());
     expect(booking.driverName).toEqual(driver.name);
     expect(booking.driverAge).toEqual(driver.age);
@@ -100,7 +100,6 @@ describe(`POST ${url}`, () => {
       .post(url)
       .send({
         vehicleId: seededVehicle.id,
-        fromDate: '2022-01-10T10:00:00.000Z',
         toDate: '2022-01-17T10:00:00.000Z',
         driver: {
           name: 'Test Driver',
@@ -128,7 +127,6 @@ describe(`POST ${url}`, () => {
       .post(url)
       .send({
         vehicleId: nonExistentId,
-        fromDate: '2022-01-10T10:00:00.000Z',
         toDate: '2022-01-11T10:00:00.000Z',
         driver: {
           name: 'Test Driver',

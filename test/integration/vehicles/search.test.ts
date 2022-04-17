@@ -6,6 +6,7 @@ import { getTestUrl } from '@test/utils/app.utils';
 import { seedVehicle } from '@test/db/seeders/vehicle.seeder';
 import { useMigratedRefreshDatabase } from '@test/utils/typeorm-seeding.utils';
 import { User } from '@src/db/entities/user.entity';
+import { MOCKED_DATE } from '@test/data/mocks/date.mock';
 
 const url = '/vehicles';
 
@@ -25,6 +26,7 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
+      .query({ toDate: new Date() })
       .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
@@ -69,6 +71,7 @@ describe(`GET ${url}`, () => {
         pageSize: 2,
         sortBy: 'price',
         sortDirection: 'DESC',
+        toDate: new Date(),
       })
       .set({ 'Api-Key': user.apiKey })
       .expect(200);
@@ -96,7 +99,7 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ query: 'mATch Sho' })
+      .query({ query: 'mATch Sho', toDate: new Date() })
       .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
@@ -119,7 +122,6 @@ describe(`GET ${url}`, () => {
     const response = await request(getTestUrl())
       .get(url)
       .query({
-        fromDate: '2022-01-08T10:00:00.000Z',
         toDate: '2022-01-10T12:00:00.000Z',
       })
       .set({ 'Api-Key': user.apiKey })
@@ -144,7 +146,7 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ seatsMin: 2, seatsMax: 2 })
+      .query({ seatsMin: 2, seatsMax: 2, toDate: new Date() })
       .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
@@ -169,7 +171,7 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ powerMin: 70, powerMax: 90 })
+      .query({ powerMin: 70, powerMax: 90, toDate: new Date() })
       .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
@@ -191,7 +193,7 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ transmissions: 'manual' })
+      .query({ transmissions: 'manual', toDate: new Date() })
       .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
@@ -216,7 +218,7 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ fuels: 'diesel,electric' })
+      .query({ fuels: 'diesel,electric', toDate: new Date() })
       .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
@@ -246,7 +248,7 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ bodyStyles: 'sedan,hatchback' })
+      .query({ bodyStyles: 'sedan,hatchback', toDate: new Date() })
       .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
@@ -267,12 +269,13 @@ describe(`GET ${url}`, () => {
     const user = await factory(User)().create();
     const { vehicle: seededVehicle } = await seedVehicle();
 
-    const fromDate = '2022-01-10T10:00:00.000Z';
     const response = await request(getTestUrl())
       .get(url)
       .query({
-        fromDate,
-        toDate: dayjs(fromDate).add(bookingDays, 'days').toDate().toISOString(),
+        toDate: dayjs(MOCKED_DATE)
+          .add(bookingDays, 'days')
+          .toDate()
+          .toISOString(),
         driverAge,
       })
       .set({ 'Api-Key': user.apiKey })
