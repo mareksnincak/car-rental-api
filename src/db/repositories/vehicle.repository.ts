@@ -58,7 +58,7 @@ export class VehicleRepository extends Repository<Vehicle> {
 
     if (fromDate && toDate) {
       qb.andWhere(
-        '(booking IS NULL OR NOT (booking.fromDate, booking.toDate) OVERLAPS (:fromDate, :toDate))',
+        "(booking IS NULL OR NOT (booking.fromDate, COALESCE(booking.returnedAt, 'INFINITY')) OVERLAPS (:fromDate, :toDate))",
         {
           fromDate,
           toDate,

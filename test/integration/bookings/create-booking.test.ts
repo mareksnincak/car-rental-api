@@ -76,6 +76,29 @@ describe(`POST ${url}`, () => {
     expect(booking.priceTotal).toEqual(expectedTotal);
   });
 
+  it('Allow to book vehicle that was returned sooner', async () => {
+    const user = await factory(User)().create();
+    const { vehicle: seededVehicle } = await seedVehicle({
+      bookingsOverrideParams: [
+        {
+          userId: user.id,
+          fromDate: dayjs(MOCKED_DATE).add(-2, 'days').toDate(),
+          toDate: dayjs(MOCKED_DATE).add(4, 'days').toDate(),
+          returnedAt: dayjs(MOCKED_DATE).add(-1, 'day').toDate(),
+        },
+      ],
+    });
+
+    await request(getTestUrl())
+      .post(url)
+      .send({
+        vehicleId: seededVehicle.id,
+        toDate: dayjs(MOCKED_DATE).add(4, 'days').toDate(),
+      })
+      .set({ 'Api-Key': user.apiKey })
+      .expect(201);
+  });
+
   it("Should return error when vehicle isn't available", async () => {
     const user = await factory(User)().create();
     const { vehicle: seededVehicle } = await seedVehicle({

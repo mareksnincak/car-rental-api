@@ -129,6 +129,29 @@ describe(`GET ${url}`, () => {
     expect(response.body.data).toHaveLength(0);
   });
 
+  it('Should return vehicle that was returned sooner', async () => {
+    const user = await factory(User)().create();
+    await seedVehicle({
+      bookingsOverrideParams: [
+        {
+          fromDate: dayjs(MOCKED_DATE).add(-2, 'days').toDate(),
+          toDate: dayjs(MOCKED_DATE).add(4, 'days').toDate(),
+          returnedAt: dayjs(MOCKED_DATE).add(-1, 'day').toDate(),
+        },
+      ],
+    });
+
+    const response = await request(getTestUrl())
+      .get(url)
+      .query({
+        toDate: '2022-01-10T12:00:00.000Z',
+      })
+      .set({ 'Api-Key': user.apiKey })
+      .expect(200);
+
+    expect(response.body.data).toHaveLength(1);
+  });
+
   it('Should filter vehicles by number of seats', async () => {
     const user = await factory(User)().create();
     const [vehicleToMatch] = await Promise.all([

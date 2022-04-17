@@ -9,7 +9,7 @@ export class AddBookingOverlapConstraints1639853979148
       new TableExclusion({
         name: 'overlapping_bookings_constraint',
         expression:
-          "USING GIST (vehicle_id WITH =, tstzrange(from_date, to_date, '[)') WITH &&)",
+          "USING GIST (vehicle_id WITH =, tstzrange(from_date, to_date, '[)') WITH &&) WHERE (returned_at IS NULL)",
       }),
     );
 
