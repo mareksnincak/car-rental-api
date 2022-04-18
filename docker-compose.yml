@@ -10,7 +10,7 @@ services:
     restart: always
 
   car-rental-api:
-    image: mareksnincak/car-rental-api:1.0.0
+    image: mareksnincak/car-rental-api:1.0.1
     ports:
       - 0.0.0.0:3000:3000
     env_file:
