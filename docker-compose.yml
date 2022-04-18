@@ -10,9 +10,7 @@ services:
     restart: always
 
   car-rental-api:
-    build:
-      context: ./
-      dockerfile: Dockerfile.production
+    image: mareksnincak/car-rental-api:1.0.0
     ports:
       - 0.0.0.0:3000:3000
     env_file:
