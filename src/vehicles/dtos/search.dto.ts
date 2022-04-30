@@ -6,12 +6,11 @@ import {
   IsNumber,
   IsOptional,
   Min,
-  ValidateIf,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
 import { SearchDto } from '@common/dtos/search.dto';
-import { IsGreater, MinFn } from '@common/decorators/class-validator';
+import { MinFn } from '@common/decorators/class-validator';
 import {
   ESortBy,
   BODY_STYLES,
@@ -20,23 +19,10 @@ import {
 } from '@vehicles/vehicle.constants';
 
 export class SearchVehiclesDto extends SearchDto {
-  @ValidateIf(({ toDate }) => !!toDate)
   @Type(() => Date)
   @IsDate()
   @MinFn(() => new Date())
-  fromDate?: Date;
-
-  @ValidateIf(({ fromDate }) => !!fromDate)
-  @Type(() => Date)
-  @IsDate()
-  @IsGreater('fromDate')
-  toDate?: Date;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(18)
-  driverAge?: number;
+  toDate: Date;
 
   @IsOptional()
   @Type(() => Number)

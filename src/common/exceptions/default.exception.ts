@@ -5,10 +5,16 @@ export class AppException extends HttpException {
   public readonly logMessage: string;
 
   constructor(
-    { code, type, message, detail }: TExceptionData,
+    {
+      code,
+      type,
+      message,
+      detail,
+      statusCode = HttpStatus.BAD_REQUEST,
+    }: TExceptionData,
     logMessage: string,
   ) {
-    super({ code, type, message, detail }, HttpStatus.BAD_REQUEST);
+    super({ code, type, message, detail }, statusCode);
 
     this.logMessage = logMessage;
   }

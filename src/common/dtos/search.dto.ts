@@ -1,40 +1,7 @@
-import {
-  IsEnum,
-  IsIn,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsOptional, IsString } from 'class-validator';
+import { PaginationDto } from './pagination.dto';
 
-import { ESortDirection } from '@common/types/pagination.type';
-
-export class SearchDto {
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(1)
-  page = 1;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(1)
-  @Max(100)
-  pageSize = 10;
-
-  @IsOptional()
-  @IsString()
-  @IsIn(['createdAt'])
-  sortBy = 'createdAt';
-
-  @IsOptional()
-  @IsString()
-  @IsEnum(ESortDirection)
-  sortDirection = ESortDirection.asc;
-
+export class SearchDto extends PaginationDto {
   @IsOptional()
   @IsString()
   query = '';

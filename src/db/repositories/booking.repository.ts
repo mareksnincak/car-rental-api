@@ -2,6 +2,7 @@ import {
   DeepPartial,
   EntityNotFoundError,
   EntityRepository,
+  FindOneOptions,
   QueryFailedError,
   Repository,
 } from 'typeorm';
@@ -54,5 +55,23 @@ export class BookingRepository extends Repository<Booking> {
   async createAndSaveOrFail(entityLike: DeepPartial<Booking>) {
     const booking = this.create(entityLike);
     return this.saveOrFail(booking);
+  }
+
+  async getOneOrFail(options?: FindOneOptions<Booking>) {
+    try {
+      return await this.findOneOrFail(options);
+    } catch (error) {
+      BookingRepository.handleError(error);
+    }
+  }
+
+  async getSumOfReturnedBookings(userId: string) {
+    const { sum } = await this.createQueryBuilder('booking')
+      .select('SUM(booking.priceTotal)', 'sum')
+      .where('booking.userId = :userId', { userId })
+      .andWhere('booking.returnedAt IS NOT NULL')
+      .getRawOne<{ sum: string }>();
+
+    return Number(sum);
   }
 }

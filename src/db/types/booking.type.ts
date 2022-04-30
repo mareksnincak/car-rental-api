@@ -1,8 +1,11 @@
+import { TVehicleJson } from './vehicle.type';
+
 export type TJsonOptions = {
   includePrivateData?: boolean;
+  includeVehicle?: boolean;
 };
 
-export type TJsonData = {
+export type TBookingJson = {
   fromDate: Date;
   toDate: Date;
   id?: string;
@@ -11,10 +14,6 @@ export type TJsonData = {
     total: number;
     deposit: number;
   };
-  driver?: {
-    name: string;
-    age: number;
-    email: string;
-    idNumber: string;
-  };
+  vehicle?: TVehicleJson;
+  returnedAt?: Date | null;
 };

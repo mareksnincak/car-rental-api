@@ -1,18 +1,21 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 
 import { VehicleService } from './vehicle.service';
 import { SearchVehiclesDto } from './dtos/search.dto';
-import { GetPriceDto } from './dtos/get-price.dto';
-import { GetDetailDto } from './dtos/get-detail.dto';
-import { GetByIdDto } from '@common/dtos/get-by-id.dto';
+import { User } from '@src/db/entities/user.entity';
+import { Locals } from '@src/common/decorators/express/locals.decorator';
 
 @Controller('/vehicles')
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
   @Get('/')
-  async search(@Query() queryParams: SearchVehiclesDto) {
+  async search(
+    @Locals('user') user: User,
+    @Query() queryParams: SearchVehiclesDto,
+  ) {
     const { vehicles, pagination } = await this.vehicleService.search(
+      user,
       queryParams,
     );
 
@@ -20,35 +23,5 @@ export class VehicleController {
       data: vehicles,
       pagination,
     };
-  }
-
-  @Get('/:id')
-  async getDetail(@Param() params: GetByIdDto, @Query() query: GetDetailDto) {
-    const { id } = params;
-    const { fromDate, toDate, driverAge } = query;
-
-    const { vehicle, bookings } = await this.vehicleService.getDetail({
-      id,
-      fromDate,
-      toDate,
-      driverAge,
-    });
-
-    return { vehicle, bookings };
-  }
-
-  @Get('/price/:id')
-  async getPrice(@Param() params: GetByIdDto, @Query() query: GetPriceDto) {
-    const { id } = params;
-    const { fromDate, toDate, driverAge } = query;
-
-    const price = await this.vehicleService.getPrice({
-      id,
-      fromDate,
-      toDate,
-      driverAge,
-    });
-
-    return price;
   }
 }

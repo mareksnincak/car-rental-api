@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import configValidation from '@common/validations/config.validation';
 import { VehicleModule } from '@vehicles/vehicle.module';
 import { BookingModule } from '@bookings/booking.module';
+import { UserModule } from './users/user.module';
 import ormConfig from '../ormconfig';
 
 @Module({
@@ -17,6 +18,7 @@ import ormConfig from '../ormconfig';
     TypeOrmModule.forRoot(ormConfig),
     VehicleModule,
     BookingModule,
+    UserModule,
   ],
 })
 export class AppModule {}

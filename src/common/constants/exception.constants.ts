@@ -3,6 +3,10 @@ export const EXCEPTIONS = {
     code: 1,
     type: 'unknown',
   },
+  unauthorized: {
+    code: 10,
+    type: 'unauthorized',
+  },
   validation: {
     code: 1000,
     type: 'validation',
@@ -14,5 +18,9 @@ export const EXCEPTIONS = {
   conflict: {
     code: 2001,
     type: 'conflict',
+  },
+  unprocessableEntity: {
+    code: 2002,
+    type: 'unprocessable_entity',
   },
 } as const;

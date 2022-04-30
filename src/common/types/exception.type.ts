@@ -3,4 +3,5 @@ export type TExceptionData = {
   type: string;
   message: string;
   detail?: Record<string, unknown>;
+  statusCode?: number;
 };

@@ -10,6 +10,7 @@ import DbUtils from '@db/db.utils';
 import { NotFoundAppException } from '@common/exceptions/not-found.exception';
 import { TSearchParams } from '@vehicles/vehicle.type';
 import { ESortBy } from '@vehicles/vehicle.constants';
+import { Booking } from '../entities/booking.entity';
 
 @EntityRepository(Vehicle)
 export class VehicleRepository extends Repository<Vehicle> {
@@ -41,7 +42,6 @@ export class VehicleRepository extends Repository<Vehicle> {
 
     const qb = this.createQueryBuilder('vehicle')
       .innerJoinAndSelect('vehicle.vehicleModel', 'vehicleModel')
-      .leftJoin('vehicle.bookings', 'booking')
       .where('vehicleModel.transmission IN (:...transmissions)', {
         transmissions,
       })
@@ -57,13 +57,23 @@ export class VehicleRepository extends Repository<Vehicle> {
     }
 
     if (fromDate && toDate) {
-      qb.andWhere(
-        '(booking IS NULL OR NOT (booking.fromDate, booking.toDate) OVERLAPS (:fromDate, :toDate))',
-        {
-          fromDate,
-          toDate,
-        },
-      );
+      qb.andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .from(Booking, 'booking')
+          .where('booking.vehicleId = vehicle.id')
+          .andWhere('booking.returnedAt IS NULL')
+          .andWhere(
+            '(booking.fromDate, booking.toDate) OVERLAPS (:fromDate, :toDate)',
+            {
+              fromDate,
+              toDate,
+            },
+          )
+          .getQuery();
+
+        return `NOT EXISTS ${subQuery}`;
+      });
     }
 
     qb.andWhere('vehicleModel.seats >= :seatsMin', { seatsMin });
@@ -81,27 +91,6 @@ export class VehicleRepository extends Repository<Vehicle> {
       .skip((page - 1) * pageSize)
       .take(pageSize)
       .getManyAndCount();
-  }
-
-  async getOneWithFutureBookingsOrFail(id: string) {
-    try {
-      /**
-       * We pass js date as current date instead of using db NOW()
-       * to be able to mock it in tests
-       */
-      return await this.createQueryBuilder('vehicle')
-        .innerJoinAndSelect('vehicle.vehicleModel', 'vehicleModel')
-        .leftJoinAndSelect(
-          'vehicle.bookings',
-          'booking',
-          'booking.toDate >= :currentDate',
-          { currentDate: new Date() },
-        )
-        .where('vehicle.id = :id', { id })
-        .getOneOrFail();
-    } catch (error) {
-      VehicleRepository.handleError(error);
-    }
   }
 
   async getOneOrFail(options?: FindOneOptions<Vehicle>) {

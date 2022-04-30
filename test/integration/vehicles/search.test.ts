@@ -1,10 +1,12 @@
 import request from 'supertest';
-import { useSeeding } from 'typeorm-seeding';
+import { factory, useSeeding } from 'typeorm-seeding';
 import dayjs from 'dayjs';
 
 import { getTestUrl } from '@test/utils/app.utils';
 import { seedVehicle } from '@test/db/seeders/vehicle.seeder';
 import { useMigratedRefreshDatabase } from '@test/utils/typeorm-seeding.utils';
+import { User } from '@src/db/entities/user.entity';
+import { MOCKED_DATE } from '@test/data/mocks/date.mock';
 
 const url = '/vehicles';
 
@@ -17,11 +19,16 @@ describe(`GET ${url}`, () => {
     await useMigratedRefreshDatabase();
   });
 
-  it('Should return vehicle', async () => {
+  it('Should return vehicle search result', async () => {
+    const user = await factory(User)().create();
     const { vehicle: seededVehicle, vehicleModel: seededVehicleModel } =
       await seedVehicle();
 
-    const response = await request(getTestUrl()).get(url).expect(200);
+    const response = await request(getTestUrl())
+      .get(url)
+      .query({ toDate: new Date() })
+      .set({ 'Api-Key': user.apiKey })
+      .expect(200);
 
     const vehicles = response.body.data;
     expect(vehicles.length).toEqual(1);
@@ -40,10 +47,10 @@ describe(`GET ${url}`, () => {
     expect(vehicle.seats).toEqual(seededVehicleModel.seats);
     expect(vehicle.doors).toEqual(seededVehicleModel.doors);
     expect(vehicle.imageUrl).toEqual(seededVehicleModel.imageUrl);
-    expect(vehicle.price).toEqual(null);
   });
 
   it('Should return paginated vehicles', async () => {
+    const user = await factory(User)().create();
     const [{ vehicle: cheapestVehicle }] = await Promise.all([
       seedVehicle({
         overrideParams: { purchasePrice: 10000, mileage: 100000 },
@@ -63,7 +70,9 @@ describe(`GET ${url}`, () => {
         pageSize: 2,
         sortBy: 'price',
         sortDirection: 'DESC',
+        toDate: new Date(),
       })
+      .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
     const { data: vehicles, pagination } = response.body;
@@ -77,6 +86,7 @@ describe(`GET ${url}`, () => {
   });
 
   it('Should filter vehicles by search query', async () => {
+    const user = await factory(User)().create();
     const [vehicleToMatch] = await Promise.all([
       seedVehicle({
         vehicleModelOverrideParams: { make: 'should', model: 'match' },
@@ -88,7 +98,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ query: 'mATch Sho' })
+      .query({ query: 'mATch Sho', toDate: new Date() })
+      .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
     const vehicles = response.body.data;
@@ -97,6 +108,7 @@ describe(`GET ${url}`, () => {
   });
 
   it('Should not return unavailable vehicles', async () => {
+    const user = await factory(User)().create();
     await seedVehicle({
       bookingsOverrideParams: [
         {
@@ -109,15 +121,66 @@ describe(`GET ${url}`, () => {
     const response = await request(getTestUrl())
       .get(url)
       .query({
-        fromDate: '2022-01-08T10:00:00.000Z',
         toDate: '2022-01-10T12:00:00.000Z',
       })
+      .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
     expect(response.body.data).toHaveLength(0);
   });
 
+  it('Should not return unavailable vehicles that had multiple bookings', async () => {
+    const user = await factory(User)().create();
+    await seedVehicle({
+      bookingsOverrideParams: [
+        {
+          fromDate: new Date('2022-01-10T10:00:00.000Z'),
+          toDate: new Date('2022-01-20T10:00:00.000Z'),
+        },
+        {
+          fromDate: new Date('2021-01-10T10:00:00.000Z'),
+          toDate: new Date('2021-01-20T10:00:00.000Z'),
+          returnedAt: new Date('2021-01-20T10:00:00.000Z'),
+        },
+      ],
+    });
+
+    const response = await request(getTestUrl())
+      .get(url)
+      .query({
+        toDate: '2022-01-10T12:00:00.000Z',
+      })
+      .set({ 'Api-Key': user.apiKey })
+      .expect(200);
+
+    expect(response.body.data).toHaveLength(0);
+  });
+
+  it('Should return vehicle that was returned sooner', async () => {
+    const user = await factory(User)().create();
+    await seedVehicle({
+      bookingsOverrideParams: [
+        {
+          fromDate: dayjs(MOCKED_DATE).add(-2, 'days').toDate(),
+          toDate: dayjs(MOCKED_DATE).add(4, 'days').toDate(),
+          returnedAt: dayjs(MOCKED_DATE).add(-1, 'day').toDate(),
+        },
+      ],
+    });
+
+    const response = await request(getTestUrl())
+      .get(url)
+      .query({
+        toDate: '2022-01-10T12:00:00.000Z',
+      })
+      .set({ 'Api-Key': user.apiKey })
+      .expect(200);
+
+    expect(response.body.data).toHaveLength(1);
+  });
+
   it('Should filter vehicles by number of seats', async () => {
+    const user = await factory(User)().create();
     const [vehicleToMatch] = await Promise.all([
       seedVehicle({
         vehicleModelOverrideParams: { seats: 2 },
@@ -132,7 +195,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ seatsMin: 2, seatsMax: 2 })
+      .query({ seatsMin: 2, seatsMax: 2, toDate: new Date() })
+      .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
     const vehicles = response.body.data;
@@ -141,6 +205,7 @@ describe(`GET ${url}`, () => {
   });
 
   it('Should filter vehicles by power', async () => {
+    const user = await factory(User)().create();
     const [vehicleToMatch] = await Promise.all([
       seedVehicle({
         vehicleModelOverrideParams: { power: 80 },
@@ -155,7 +220,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ powerMin: 70, powerMax: 90 })
+      .query({ powerMin: 70, powerMax: 90, toDate: new Date() })
+      .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
     const vehicles = response.body.data;
@@ -164,6 +230,7 @@ describe(`GET ${url}`, () => {
   });
 
   it('Should filter vehicles by transmission', async () => {
+    const user = await factory(User)().create();
     const [vehicleToMatch] = await Promise.all([
       seedVehicle({
         vehicleModelOverrideParams: { transmission: 'manual' },
@@ -175,7 +242,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ transmissions: 'manual' })
+      .query({ transmissions: 'manual', toDate: new Date() })
+      .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
     const vehicles = response.body.data;
@@ -184,6 +252,7 @@ describe(`GET ${url}`, () => {
   });
 
   it('Should filter vehicles by fuel', async () => {
+    const user = await factory(User)().create();
     const [vehicleToMatch1, vehicleToMatch2] = await Promise.all([
       seedVehicle({
         vehicleModelOverrideParams: { fuel: 'diesel' },
@@ -198,7 +267,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ fuels: 'diesel,electric' })
+      .query({ fuels: 'diesel,electric', toDate: new Date() })
+      .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
     const vehicles = response.body.data;
@@ -212,6 +282,7 @@ describe(`GET ${url}`, () => {
   });
 
   it('Should filter vehicles by body style', async () => {
+    const user = await factory(User)().create();
     const [vehicleToMatch1, vehicleToMatch2] = await Promise.all([
       seedVehicle({
         vehicleModelOverrideParams: { bodyStyle: 'sedan' },
@@ -226,7 +297,8 @@ describe(`GET ${url}`, () => {
 
     const response = await request(getTestUrl())
       .get(url)
-      .query({ bodyStyles: 'sedan,hatchback' })
+      .query({ bodyStyles: 'sedan,hatchback', toDate: new Date() })
+      .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
     const vehicles = response.body.data;
@@ -239,20 +311,24 @@ describe(`GET ${url}`, () => {
     );
   });
 
-  it('Should calculate price when dates and driverAge is specified', async () => {
+  it('Should calculate price', async () => {
     const driverAge = 30;
     const bookingDays = 1;
 
+    const user = await factory(User)().create({
+      dateOfBirth: dayjs(MOCKED_DATE).add(-driverAge, 'years').toDate(),
+    });
     const { vehicle: seededVehicle } = await seedVehicle();
 
-    const fromDate = '2022-01-10T10:00:00.000Z';
     const response = await request(getTestUrl())
       .get(url)
       .query({
-        fromDate,
-        toDate: dayjs(fromDate).add(bookingDays, 'days').toDate().toISOString(),
-        driverAge,
+        toDate: dayjs(MOCKED_DATE)
+          .add(bookingDays, 'days')
+          .toDate()
+          .toISOString(),
       })
+      .set({ 'Api-Key': user.apiKey })
       .expect(200);
 
     const { price } = response.body.data[0];

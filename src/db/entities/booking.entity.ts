@@ -9,8 +9,9 @@ import {
 } from 'typeorm';
 
 import { Vehicle } from '@entities/vehicle.entity';
-import { TJsonData, TJsonOptions } from '@db/types/booking.type';
+import { TBookingJson, TJsonOptions } from '@db/types/booking.type';
 import { NumericTransformer } from '@transformers/numeric.transformer';
+import { User } from './user.entity';
 
 @Entity('bookings')
 export class Booking {
@@ -30,6 +31,13 @@ export class Booking {
   @JoinColumn({ name: 'vehicle_id' })
   vehicle: Vehicle;
 
+  @Column({ nullable: true, name: 'user_id' })
+  userId: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
   @Column({
     name: 'price_total',
     type: 'decimal',
@@ -48,17 +56,12 @@ export class Booking {
   })
   priceDeposit: number;
 
-  @Column({ name: 'driver_name', type: 'varchar' })
-  driverName: string;
-
-  @Column({ name: 'driver_age', type: 'integer' })
-  driverAge: number;
-
-  @Column({ name: 'driver_email', type: 'varchar' })
-  driverEmail: string;
-
-  @Column({ name: 'driver_id_number', type: 'varchar' })
-  driverIdNumber: string;
+  @Column({
+    name: 'returned_at',
+    type: 'timestamp with time zone',
+    nullable: true,
+  })
+  returnedAt: Date | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;
@@ -66,11 +69,20 @@ export class Booking {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
 
-  toJson({ includePrivateData = false }: TJsonOptions = {}) {
-    const jsonData: TJsonData = {
-      fromDate: this.fromDate,
-      toDate: this.toDate,
+  toJson({
+    includePrivateData = false,
+    includeVehicle = false,
+  }: TJsonOptions = {}) {
+    const { fromDate, toDate } = this;
+
+    const jsonData: TBookingJson = {
+      fromDate,
+      toDate,
     };
+
+    if (includeVehicle) {
+      jsonData.vehicle = this.vehicle.toJson();
+    }
 
     if (includePrivateData) {
       jsonData.id = this.id;
@@ -78,13 +90,7 @@ export class Booking {
         total: this.priceTotal,
         deposit: this.priceDeposit,
       };
-      jsonData.vehicleId = this.vehicleId;
-      jsonData.driver = {
-        name: this.driverName,
-        age: this.driverAge,
-        email: this.driverEmail,
-        idNumber: this.driverIdNumber,
-      };
+      jsonData.returnedAt = this.returnedAt;
     }
 
     return jsonData;

@@ -1,0 +1,9 @@
+services:
+  car-rental-api:
+    build:
+      context: ./
+      dockerfile: Dockerfile.development
+    ports:
+      - 127.0.0.1:9229:9229
+    volumes:
+      - ./src:/app/src
